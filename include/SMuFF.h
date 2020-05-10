@@ -137,6 +137,10 @@ extern U8G2_ST7565_64128N_F_4W_HW_SPI       display;
   extern U8G2_UC1701_MINI12864_1_2ND_4W_HW_SPI display;
   #endif
 #endif
+#ifdef __BRD_NUCLEO_F103RB
+//extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C  display;
+extern U8G2_SSD1327_WS_128X128_F_HW_I2C display;
+#endif
 
 extern ClickEncoder   encoder;
 

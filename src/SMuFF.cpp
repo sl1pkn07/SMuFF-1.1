@@ -33,6 +33,10 @@ U8G2_ST7565_64128N_F_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ D
   U8G2_UC1701_MINI12864_1_2ND_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
   #endif
 #endif
+#ifdef __BRD_NUCLEO_F103RB
+//U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+U8G2_SSD1327_WS_128X128_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+#endif
 
 ZStepper                steppers[NUM_STEPPERS];
 ZTimer                  stepperTimer;
