@@ -28,14 +28,14 @@
 SdFs SD;
 
 #if defined(__STM32F1__)
-const size_t capacity = 2200;
-const size_t scapacity = 1500;
+  const size_t capacity = 2200;
+  const size_t scapacity = 1500;
 #elif defined(__ESP32__)
-const size_t capacity = 4500;     // since the ESP32 has more memory, we can do this
-const size_t scapacity = 1000;
+  const size_t capacity = 4500;     // since the ESP32 has more memory, we can do this
+  const size_t scapacity = 1000;
 #else
-const size_t capacity = 1300;
-const size_t scapacity = 1000;
+  const size_t capacity = 1300;
+  const size_t scapacity = 1000;
 #endif
 
 bool initSD(bool showStatus) {
@@ -385,13 +385,13 @@ bool readServoMapping() {
 
         if(jsonDoc[item] == nullptr) {
           #if defined(MULTISERVO)
-          servoMapping[i] = -1;
+            servoMapping[i] = -1;
           #else
           #endif
         }
         else {
           #if defined(MULTISERVO)
-          servoMapping[i] = jsonDoc[item][servoOutput];
+            servoMapping[i] = jsonDoc[item][servoOutput];
           #endif
           servoPosClosed[i] = jsonDoc[item][servoClosed];
         }

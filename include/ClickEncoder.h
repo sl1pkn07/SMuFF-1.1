@@ -13,10 +13,10 @@
 #pragma once
 
 #include <stdint.h>
-#if defined (__AVR__)
-	#include <avr/io.h>
-	#include <avr/interrupt.h>
-	#include <avr/pgmspace.h>
+#if defined(__AVR__)
+  #include <avr/io.h>
+  #include <avr/interrupt.h>
+  #include <avr/pgmspace.h>
 #endif
 #include "Arduino.h"
 #include "CommonMacros.h"
@@ -30,13 +30,13 @@
 // ----------------------------------------------------------------------------
 
 #ifndef ENC_DECODER
-#  define ENC_DECODER     ENC_NORMAL
+  #define ENC_DECODER     ENC_NORMAL
 #endif
 
 #if ENC_DECODER == ENC_FLAKY
-#  ifndef ENC_HALFSTEP
-#    define ENC_HALFSTEP  1        // use table for half step per default
-#  endif
+  #ifndef ENC_HALFSTEP
+    #define ENC_HALFSTEP  1        // use table for half step per default
+  #endif
 #endif
 
 // ----------------------------------------------------------------------------
@@ -57,17 +57,17 @@ private:
   uint8_t steps = 0;
   bool enableSound;
 
-#ifndef WITHOUT_BUTTON
-  volatile ButtonState button;
-  unsigned long lastButtonCheck = 0;
-  uint8_t doubleClickTicks = 0;
-  bool doubleClickEnabled;
-  uint16_t keyDownTicks = 0;
-#endif
+  #if !defined(WITHOUT_BUTTON)
+    volatile ButtonState button;
+    unsigned long lastButtonCheck = 0;
+    uint8_t doubleClickTicks = 0;
+    bool doubleClickEnabled;
+    uint16_t keyDownTicks = 0;
+  #endif
 
-#if ENC_DECODER != ENC_NORMAL
-  static const int8_t table[16];
-#endif
+  #if ENC_DECODER != ENC_NORMAL
+    static const int8_t table[16];
+  #endif
 
 public:
   ClickEncoder(uint8_t A, uint8_t B, uint8_t BTN, uint8_t stepsPerNotch, bool active = false);
@@ -75,24 +75,24 @@ public:
   void service(void);
   int16_t getValue(void);
 
-#ifndef WITHOUT_BUTTON
-public:
-  ButtonState getButton(uint8_t which = 0);   // which is not being used here
-  void resetButton(uint8_t which = 0) { button = Open; lastButtonCheck = millis(); doubleClickTicks = 0; }
-#endif
+  #if !defined(WITHOUT_BUTTON)
+  public:
+    ButtonState getButton(uint8_t which = 0);   // which is not being used here
+    void resetButton(uint8_t which = 0) { button = Open; lastButtonCheck = millis(); doubleClickTicks = 0; }
+  #endif
 
-#ifndef WITHOUT_BUTTON
-public:
-  void setDoubleClickEnabled(const bool &d)
-  {
-    doubleClickEnabled = d;
-  }
+  #if !defined(WITHOUT_BUTTON)
+  public:
+    void setDoubleClickEnabled(const bool &d)
+    {
+      doubleClickEnabled = d;
+    }
 
-  const bool getDoubleClickEnabled()
-  {
-    return doubleClickEnabled;
-  }
-#endif
+    const bool getDoubleClickEnabled()
+    {
+      return doubleClickEnabled;
+    }
+  #endif
 
 public:
   void setEnableSound(const bool &d)

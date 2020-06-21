@@ -33,12 +33,12 @@ typedef enum _ButtonState {
 
 #if !defined(USE_LEONERD_DISPLAY)
 
-// Buttons
-typedef enum _Buttons {
-    NoButton = 0,
-    WheelButton,
-    MainButton,
-    LeftButton,
-    RightButton
-} Buttons;
+  // Buttons
+  typedef enum _Buttons {
+      NoButton = 0,
+      WheelButton,
+      MainButton,
+      LeftButton,
+      RightButton
+  } Buttons;
 #endif

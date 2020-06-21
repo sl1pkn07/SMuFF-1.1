@@ -33,9 +33,9 @@ void drawValue(const char* title, const char* PROGMEM message, String val) {
 bool getEncoderButton(bool encoderOnly) {
   bool stat = (encoder.getButton() == Clicked);
   #if defined(USE_LEONERD_DISPLAY)
-  if(!encoderOnly && encoder.getButton(MainButton) == Clicked) {
-    stat = true;
-  }
+    if(!encoderOnly && encoder.getButton(MainButton) == Clicked) {
+      stat = true;
+    }
   #endif
   return stat;
 }
@@ -71,38 +71,38 @@ void getEncoderButton(int16_t* turn, uint8_t* button, bool* isHeld, bool* isClic
       return;
   }
   #if defined(USE_LEONERD_DISPLAY)
-  if(wheelBtn == Open) {
-    // special case for Main button on LeoNerds encoder
-    // used as "Back" button (click) or "Home" button (long click)
-    second = encoder.getButton(MainButton);
-    if(second == Clicked || second == LongClicked) {
-      *button = MainButton;
-      *isClicked = second == Clicked;
-      if(second == LongClicked) {
-        encoder.setLED(LED_GREEN, true);
-        encoder.setLED(LED_RED, true);
-        delay(300);
-        encoder.setLED(LED_GREEN, false);
-        encoder.setLED(LED_RED, false);
-        remoteKey = REMOTE_HOME;
+    if(wheelBtn == Open) {
+      // special case for Main button on LeoNerds encoder
+      // used as "Back" button (click) or "Home" button (long click)
+      second = encoder.getButton(MainButton);
+      if(second == Clicked || second == LongClicked) {
+        *button = MainButton;
+        *isClicked = second == Clicked;
+        if(second == LongClicked) {
+          encoder.setLED(LED_GREEN, true);
+          encoder.setLED(LED_RED, true);
+          delay(300);
+          encoder.setLED(LED_GREEN, false);
+          encoder.setLED(LED_RED, false);
+          remoteKey = REMOTE_HOME;
+        }
+        return;
       }
-      return;
+      second = encoder.getButton(RightButton);
+      if(second == Clicked || second == LongClicked) {
+        *button = RightButton;
+        *isClicked = second == Clicked;
+        *isHeld = second == LongClicked;
+        return;
+      }
+      second = encoder.getButton(LeftButton);
+      if(second == Clicked || second == LongClicked) {
+        *button = LeftButton;
+        *isClicked = second == Clicked;
+        *isHeld = second == LongClicked;
+        return;
+      }
     }
-    second = encoder.getButton(RightButton);
-    if(second == Clicked || second == LongClicked) {
-      *button = RightButton;
-      *isClicked = second == Clicked;
-      *isHeld = second == LongClicked;
-      return;
-    }
-    second = encoder.getButton(LeftButton);
-    if(second == Clicked || second == LongClicked) {
-      *button = LeftButton;
-      *isClicked = second == Clicked;
-      *isHeld = second == LongClicked;
-      return;
-    }
-  }
   #endif
   if(wheelBtn != Open) {
     if(wheelBtn == LongClicked || wheelBtn == Held) {
@@ -118,11 +118,11 @@ void getEncoderButton(int16_t* turn, uint8_t* button, bool* isHeld, bool* isClic
 
 void getInput(int16_t* turn, uint8_t* button, bool* isHeld, bool* isClicked, bool checkSerial) {
   #if defined(USE_LEONERD_DISPLAY)
-  encoder.loop();
+    encoder.loop();
   #endif
   #if defined(__STM32F1__) || defined(__ESP32__)
-  if(checkSerial)
-    checkSerialPending();
+    if(checkSerial)
+      checkSerialPending();
   #endif
   getEncoderButton(turn, button, isHeld, isClicked);
   if(*isClicked || *isHeld || *turn != 0) {

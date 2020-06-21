@@ -49,7 +49,7 @@
 #define BEEPER_PIN          37
 
 #define DEBUG_PIN           -1
-#define RELAY_PIN          -1     // Relais for stepper motor switching
+#define RELAY_PIN           -1     // Relais for stepper motor switching
 
 #define SERVO1_PIN          44
 #define SERVO2_PIN          14

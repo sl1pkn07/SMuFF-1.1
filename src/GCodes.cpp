@@ -241,9 +241,9 @@ bool M42(const char* msg, String buf, int8_t serial) {
           case 2: pinMode(pin, INPUT_PULLUP); break;
           case 3:
             #if defined(__AVR__)
-            pinMode(pin, INPUT);
+              pinMode(pin, INPUT);
             #else
-            pinMode(pin, INPUT_PULLDOWN);
+              pinMode(pin, INPUT_PULLDOWN);
             #endif
             break;
          }
@@ -254,9 +254,9 @@ bool M42(const char* msg, String buf, int8_t serial) {
       }
       if((param = getParam(buf, S_Param)) != -1 && mode == 1) {
         if(param >= 0 && param <= 255) {
-          #ifdef __STM32F1__
+          #if defined(__STM32F1__)
             pwmWrite(pin, param);
-          #elif __ESP32__
+          #elif defined(__ESP32__)
             ledcWrite(pin, param);
           #else
             analogWrite(pin, param);
@@ -288,8 +288,8 @@ bool M100(const char* msg, String buf, int8_t serial) {
   printResponse(msg, serial);
   char tmp[50];
   #if defined(__AVR__)
-  sprintf_P(tmp, P_FreeMemory, freeMemory());
-  printResponseP(tmp, serial);
+    sprintf_P(tmp, P_FreeMemory, freeMemory());
+      printResponseP(tmp, serial);
   #endif
   return true;
 }
@@ -300,9 +300,9 @@ bool M106(const char* msg, String buf, int8_t serial) {
     param = 100;
   }
   //__debug(PSTR("Fan speed: %d%%"), param);
-#ifdef __STM32F1__
+#if defined(__STM32F1__)
   fan.setFanSpeed(param);
-#elif __ESP32__
+#elif defined(__ESP32__)
   ledcWrite(FAN_PIN, map(param, 0, 100, 0, 255));
 #else
   analogWrite(FAN_PIN, map(param, 0, 100, 0, 255));
@@ -312,13 +312,13 @@ bool M106(const char* msg, String buf, int8_t serial) {
 
 bool M107(const char* msg, String buf, int8_t serial) {
   printResponse(msg, serial);
-#ifdef __STM32F1__
-  fan.setFanSpeed(0);
-#elif __ESP32__
-  ledcWrite(FAN_PIN, 0);
-#else
-  analogWrite(FAN_PIN, 0);
-#endif
+  #if defined(__STM32F1__)
+    fan.setFanSpeed(0);
+  #elif defined(__ESP32__)
+    ledcWrite(FAN_PIN, 0);
+  #else
+    analogWrite(FAN_PIN, 0);
+  #endif
   return true;
 }
 
@@ -1752,13 +1752,13 @@ bool M914(const char* msg, String buf, int8_t serial) {
 bool M999(const char* msg, String buf, int8_t serial) {
   printResponse(msg, serial);
   delay(500);
-#ifdef __AVR__
-  __asm__ volatile ("jmp 0x0000");
-#elif __STM32F1__
-  nvic_sys_reset();
-#elif __ESP32__
-  ESP.restart();
-#endif
+  #if defined(__AVR__)
+    __asm__ volatile ("jmp 0x0000");
+  #elif defined(__STM32F1__)
+    nvic_sys_reset();
+  #elif defined(__ESP32__)
+    ESP.restart();
+  #endif
   return true;
 }
 

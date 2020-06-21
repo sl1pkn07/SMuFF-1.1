@@ -55,15 +55,15 @@ public:
 
     ZTimer() { };
 
-#if defined(__AVR__)
-    void           setupTimer(IsrTimer timer, TimerPrescaler prescaler);
-#elif defined(__STM32F1__)
-    void           setupTimer(IsrTimer timer, uint16_t prescaler);
-    void           setupTimer(IsrTimer timer, uint8_t channel, uint16_t prescaler, timerVal_t compare = 1);
-#elif defined(__ESP32__)
-    void           setupTimer(IsrTimer timer, uint16_t prescaler);
-    void           setupTimer(IsrTimer timer, uint16_t prescaler, timerVal_t compare);
-#endif
+    #if defined(__AVR__)
+      void           setupTimer(IsrTimer timer, TimerPrescaler prescaler);
+    #elif defined(__STM32F1__)
+      void           setupTimer(IsrTimer timer, uint16_t prescaler);
+      void           setupTimer(IsrTimer timer, uint8_t channel, uint16_t prescaler, timerVal_t compare = 1);
+    #elif defined(__ESP32__)
+      void           setupTimer(IsrTimer timer, uint16_t prescaler);
+      void           setupTimer(IsrTimer timer, uint16_t prescaler, timerVal_t compare);
+    #endif
     timerVal_t     getOverflow();
     void           setOverflow(timerVal_t value);
     void           setNextInterruptInterval(timerVal_t interval);

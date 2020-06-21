@@ -21,31 +21,31 @@
 
 static bool timerAction;
 
-#if defined (__ESP32__)
-static TaskHandle_t taskHandle;
+#if defined(__ESP32__)
+  static TaskHandle_t taskHandle;
 
-/**
- * Experimental...
- * Tried to overcome the panic crash with relocating the serial port
- * handling (I2C) from tiner ISR to an seperate task.
- * Unfortunatelly, the result is just the same as in the timer ISR.
- */
-void timerServiceTask(void* parameter) {
-    //ZPortExpander* instance = (ZPortExpander*)parameter;
-    uint32_t val;
-    for(;;) {
-        xTaskNotifyWait(0, ULONG_MAX, &val, portMAX_DELAY);
-        if(val == 0xAFFE) {
-            for(uint8_t i=0; i < MAX_SERIAL; i++) {
-                if(peSerials[i].getParent() != nullptr) {
-                    peSerials[i].receive();
-                    peSerials[i].transmit();
-                }
-            }
+  /**
+   * Experimental...
+   * Tried to overcome the panic crash with relocating the serial port
+   * handling (I2C) from tiner ISR to an seperate task.
+   * Unfortunatelly, the result is just the same as in the timer ISR.
+   */
+  void timerServiceTask(void* parameter) {
+      //ZPortExpander* instance = (ZPortExpander*)parameter;
+      uint32_t val;
+      for(;;) {
+          xTaskNotifyWait(0, ULONG_MAX, &val, portMAX_DELAY);
+          if(val == 0xAFFE) {
+              for(uint8_t i=0; i < MAX_SERIAL; i++) {
+                  if(peSerials[i].getParent() != nullptr) {
+                      peSerials[i].receive();
+                      peSerials[i].transmit();
+                  }
+              }
+          }
         }
-    }
-    vTaskDelete(nullptr);
-}
+      vTaskDelete(nullptr);
+  }
 #endif
 
 void ZPortExpander::begin(uint8_t i2cAddress, bool is8575, ZPortExpanderBaudrate baudrate) {
@@ -55,13 +55,13 @@ void ZPortExpander::begin(uint8_t i2cAddress, bool is8575, ZPortExpanderBaudrate
     _baudrate = baudrate;
 
     //__debug(PSTR("Baud rate timing: %d"), (uint16_t)_baudrate);
-#if defined(__ESP32__)
-    // xTaskCreate(timerServiceTask, "ZPEServiceTask", 10000, this, 1, &taskHandle);
+    #if defined(__ESP32__)
+      // xTaskCreate(timerServiceTask, "ZPEServiceTask", 10000, this, 1, &taskHandle);
 
-    serialTimer.setupTimer(ZTimer::ZTIMER3, 80);                // 1us on 80MHz Timer Clock
-    serialTimer.setupTimerHook(isrSerialTimerHandler);
-    serialTimer.setNextInterruptInterval((uint16_t)_baudrate); // run serial timer to generate clock for baud rate
-#endif
+      serialTimer.setupTimer(ZTimer::ZTIMER3, 80);                // 1us on 80MHz Timer Clock
+      serialTimer.setupTimerHook(isrSerialTimerHandler);
+      serialTimer.setNextInterruptInterval((uint16_t)_baudrate); // run serial timer to generate clock for baud rate
+    #endif
     for(uint8_t i=0; i < MAX_SERIAL; i++) {
         peSerials[i] = ZPESerial();
     }

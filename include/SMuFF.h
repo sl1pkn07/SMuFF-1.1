@@ -19,9 +19,9 @@
 #pragma once
 
 #if defined(__AVR__)
-#include <avr/pgmspace.h>
+  #include <avr/pgmspace.h>
 #elif defined(__ESP32__)
-#include <pgmspace.h>
+  #include <pgmspace.h>
 #endif
 #include <Arduino.h>
 #include "Config.h"
@@ -29,9 +29,9 @@
 #include "GCodes.h"
 #include "Menus.h"
 #if defined(USE_LEONERD_DISPLAY)
-#include "LeoNerdEncoder.h"
+  #include "LeoNerdEncoder.h"
 #else
-#include "ClickEncoder.h"
+  #include "ClickEncoder.h"
 #endif
 #include <SPI.h>
 #include <Wire.h>
@@ -40,7 +40,7 @@
 #include "MemoryFree.h"
 #include "DataStore.h"
 #if defined(USE_FASTLED_BACKLIGHT)
-#include "FastLED.h"
+  #include "FastLED.h"
 #endif
 #include "ZTimerLib.h"
 #include "ZStepperLib.h"
@@ -51,34 +51,34 @@
 #include "SoftwareSerial.h"
 #include <TMCStepper.h>
 #if defined(MULTISERVO)
-#include <Adafruit_PWMServoDriver.h>
+  #include <Adafruit_PWMServoDriver.h>
 #endif
 
 #if !defined(USE_FASTLED_BACKLIGHT)
-#define CRGB  uint32_t
+  #define CRGB  uint32_t
 #endif
 
-#if defined (__STM32F1__)
-#include <wirish.h>
-#include <libmaple/gpio.h>
-#include <USBComposite.h>
+#if defined(__STM32F1__)
+  #include <wirish.h>
+  #include <libmaple/gpio.h>
+  #include <USBComposite.h>
 
 #undef  sprintf_P
-#define sprintf_P(s, f, ...)  sprintf(s, f, ##__VA_ARGS__)
-#define vsnprintf_P           vsnprintf
-extern USBMassStorage         MassStorage;
-extern USBCompositeSerial     CompositeSerial;
+  #define sprintf_P(s, f, ...)  sprintf(s, f, ##__VA_ARGS__)
+  #define vsnprintf_P           vsnprintf
+  extern USBMassStorage         MassStorage;
+  extern USBCompositeSerial     CompositeSerial;
 
 #elif defined(__ESP32__)
-#include <WiFi.h>
-#include <BluetoothSerial.h>
+  #include <WiFi.h>
+  #include <BluetoothSerial.h>
 #endif
 
 
-#define FEEDER_SIGNAL     1
-#define SELECTOR_SIGNAL   2
-#define REVOLVER_SIGNAL   3
-#define LED_SIGNAL        4
+#define FEEDER_SIGNAL         1
+#define SELECTOR_SIGNAL       2
+#define REVOLVER_SIGNAL       3
+#define LED_SIGNAL            4
 
 #define PORT_EXPANDER_ADDRESS 0x3F
 
@@ -96,8 +96,8 @@ extern USBCompositeSerial     CompositeSerial;
 
 
 #if defined(__HW_DEBUG__) && defined(DEBUG_PIN)
-// used for internal hardware debugging only - will produce a 500Hz signal on the output pin
-#define FLIPDBG         if(DEBUG_PIN != -1) digitalWrite(DEBUG_PIN, !digitalRead(DEBUG_PIN));
+  // used for internal hardware debugging only - will produce a 500Hz signal on the output pin
+  #define FLIPDBG         if(DEBUG_PIN != -1) digitalWrite(DEBUG_PIN, !digitalRead(DEBUG_PIN));
 #endif
 
 #define ArraySize(arr)    (sizeof(arr)/sizeof(arr[0]))
@@ -197,65 +197,66 @@ extern U8G2_ST7565_64128N_F_4W_HW_SPI       display;
 #elif defined(__BRD_SKR_MINI) || defined(__BRD_SKR_MINI_E3) || defined(__BRD_SKR_MINI_E3DIP)
   extern "C" uint8_t __wrap_u8x8_byte_arduino_2nd_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr);
   #if defined(USE_TWI_DISPLAY)
-  extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C  display;
+    extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C  display;
   #elif defined(USE_LEONERD_DISPLAY)
-  extern U8G2_SH1106_128X64_NONAME_F_HW_I2C  display;
+    extern U8G2_SH1106_128X64_NONAME_F_HW_I2C  display;
   #elif defined(USE_ANET_DISPLAY)
-  extern U8G2_ST7920_128X64_F_2ND_HW_SPI display;
+    extern U8G2_ST7920_128X64_F_2ND_HW_SPI display;
   // extern U8G2_ST7920_128X64_F_SW_SPI display;
-  #elif defined(USE_MINI12864_PANEL_V21) || defined(USE_MINI12864_PANEL_V20)
-  extern U8G2_ST7567_JLX12864_F_2ND_4W_HW_SPI display;
-  #elif defined(USE_CREALITY_DISPLAY)
+  #elif defined(USE_FYSETC_1_2_DISPLAY) || defined(USE_FYSETC_2_1_DISPLAY)
+    extern U8G2_ST7567_JLX12864_F_2ND_4W_HW_SPI display;
+  #elif defined(USE_MKS_2_0_DISPLAY)
+    extern U8G2_ST7567_ENH_DG128064_F_2ND_4W_HW_SPI display;
+  #elif defined(USE_MKS_2_1_DISPLAY)
+    U8G2_ST7565_NHD_C12864_F_2ND_4W_HW_SPI display;
+  #elif USE_CREALITY_DISPLAY
     extern U8G2_ST7920_128X64_F_SW_SPI display;
-  #else
-  extern U8G2_ST7567_ENH_DG128064_F_2ND_4W_HW_SPI display;
-  //extern U8G2_UC1701_MINI12864_1_2ND_4W_HW_SPI display;
   #endif
 #elif defined(__BRD_ESP32)
   #if defined(USE_TWI_DISPLAY)
-  extern U8G2_SH1306_128X64_NONAME_F_HW_I2C  display;
+    extern U8G2_SH1306_128X64_NONAME_F_HW_I2C  display;
   #elif defined(USE_LEONERD_DISPLAY)
-  extern U8G2_SSD1106_128X64_NONAME_F_HW_I2C  display;
+    extern U8G2_SSD1106_128X64_NONAME_F_HW_I2C  display;
   #else
-  extern U8G2_ST7567_ENH_DG128064_F_4W_HW_SPI display;
+    extern U8G2_ST7567_ENH_DG128064_F_4W_HW_SPI display;
   #endif
   extern HardwareSerial Serial3;
 #elif defined(__BRD_FYSETC_AIOII)
   extern U8G2_UC1701_MINI12864_F_4W_HW_SPI display;
 #endif
 
-#ifdef __STM32F1__
-extern void playTone(int8_t pin, int16_t frequency, int16_t duration);
-extern void muteTone(int8_t pin);
-#define _tone(freq, duration)     playTone(BEEPER_PIN, freq, duration)
-#define _noTone()                 muteTone(BEEPER_PIN)
+#if defined(__STM32F1__)
+  extern void playTone(int8_t pin, int16_t frequency, int16_t duration);
+  extern void muteTone(int8_t pin);
+  #define _tone(freq, duration)     playTone(BEEPER_PIN, freq, duration)
+  #define _noTone()                 muteTone(BEEPER_PIN)
 #elif defined (__ESP32__)
-#include "Tone32.h"
-#define _tone(freq, duration)     tone(BEEPER_PIN, freq, duration, BEEPER_CHANNEL)
-#define _noTone()                 noTone(BEEPER_PIN, BEEPER_CHANNEL)
+  #include "Tone32.h"
+  #define _tone(freq, duration)     tone(BEEPER_PIN, freq, duration, BEEPER_CHANNEL)
+  #define _noTone()                 noTone(BEEPER_PIN, BEEPER_CHANNEL)
 #else
-#define _tone(freq, duration)     tone(BEEPER_PIN, freq, duration)
-#define _noTone()                 noTone(BEEPER_PIN)
+  #define _tone(freq, duration)     tone(BEEPER_PIN, freq, duration)
+  #define _noTone()                 noTone(BEEPER_PIN)
 #endif
 
-extern ZStepper       steppers[];
-extern ZTimer         stepperTimer;
-extern ZTimer         gpTimer;
-extern ZServo         servo;
-extern ZServo         servoLid;
-extern ZFan           fan;
+extern ZStepper         steppers[];
+extern ZTimer           stepperTimer;
+extern ZTimer           gpTimer;
+extern ZServo           servo;
+extern ZServo           servoLid;
+extern ZFan             fan;
 #if defined(USE_LEONERD_DISPLAY)
-extern LeoNerdEncoder encoder;
+  extern LeoNerdEncoder encoder;
 #else
-extern ClickEncoder   encoder;
+  extern ClickEncoder   encoder;
 #endif
 #if defined(USE_FASTLED_BACKLIGHT)
-extern CRGB           leds[];
+  extern CRGB           leds[];
 #else
 #endif
 #if defined(MULTISERVO)
-extern Adafruit_PWMServoDriver servoPwm;
-extern int8_t servoMapping[];
+  extern Adafruit_PWMServoDriver servoPwm;
+  extern int8_t servoMapping[];
 #endif
 extern uint8_t servoPosClosed[];
 
@@ -371,11 +372,11 @@ extern void prepSteppingRelMillimeter(int8_t index, float millimeter, bool ignor
 extern void resetRevolver();
 extern void serialEvent();
 extern void serialEvent2();
-#ifdef __AVR__
-extern void wireReceiveEvent(int numBytes);
+#if defined(__AVR__)
+  extern void wireReceiveEvent(int numBytes);
 #else
-extern void serialEvent1();
-extern void serialEvent3();
+  extern void serialEvent1();
+  extern void serialEvent3();
 #endif
 extern void beep(uint8_t count);
 extern void longBeep(uint8_t count);

@@ -25,16 +25,16 @@ extern void __debug(const char* fmt, ...);
     Duet3D laser Sensor Protocol (according to the Duet3D Wiki)
     P = partity bit
    ==============================================================================================================================
-    v1 Data word	        P00S 00pp pppp pppp	    S = switch open, pppppppppp = 10-bit filament position (50 counts/mm)
-    v1 Error word	        P010 0000 0000 0000
-    v1 Quality word	        P10s ssss bbbb bbbb	    sssss = shutter, bbbbbbbb = brightness
+    v1 Data word             P00S 00pp pppp pppp      S = switch open, pppppppppp = 10-bit filament position (50 counts/mm)
+    v1 Error word            P010 0000 0000 0000
+    v1 Quality word          P10s ssss bbbb bbbb      sssss = shutter, bbbbbbbb = brightness
 
-    v2 Data word	        P00S 1ppp pppp pppp	    S = switch open, ppppppppppp = 11-bit filament position (100 counts/mm)
-    v2 Error word	        P010 0000 0000 eeee	    eeee = error code, will not be zero
-    v2 Version word	        P110 0000 vvvv vvvv	    vvvvvvvv = sensor/firmware version, at least 2
-    v2 Image quality word	P110 0001 qqqq qqqq	    qqqqqqqq = image quality
-    v2 Brightness word	    P110 0010 bbbb bbbb	    bbbbbbbb = brightness
-    v2 Shutter word	        P110 0011 ssss ssss	    ssssssss = shutter
+    v2 Data word             P00S 1ppp pppp pppp      S = switch open, ppppppppppp = 11-bit filament position (100 counts/mm)
+    v2 Error word            P010 0000 0000 eeee      eeee = error code, will not be zero
+    v2 Version word          P110 0000 vvvv vvvv      vvvvvvvv = sensor/firmware version, at least 2
+    v2 Image quality word    P110 0001 qqqq qqqq      qqqqqqqq = image quality
+    v2 Brightness word       P110 0010 bbbb bbbb      bbbbbbbb = brightness
+    v2 Shutter word          P110 0011 ssss ssss      ssssssss = shutter
  ============================================================================================================================== */
 
 void DuetLaserSensor::attach(int8_t pin, bool v1) {

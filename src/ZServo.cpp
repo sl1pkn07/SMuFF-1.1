@@ -41,9 +41,9 @@ void ZServo::attach(int8_t pin, bool useTimer, int8_t servoIndex) {
 
   if(!_useTimer) {
     #if defined(__ESP32__)
-    ledcSetup(SERVO_CHANNEL+_servoIndex, SERVO_FREQ, 16);
-    ledcAttachPin(pin, SERVO_CHANNEL+_servoIndex);
-    //__debug(PSTR("Servo channel: %d"), SERVO_CHANNEL+_servoIndex);
+      ledcSetup(SERVO_CHANNEL+_servoIndex, SERVO_FREQ, 16);
+      ledcAttachPin(pin, SERVO_CHANNEL+_servoIndex);
+      //__debug(PSTR("Servo channel: %d"), SERVO_CHANNEL+_servoIndex);
     #endif
     //__debug(PSTR("Servo without timer initialized"));
   }
@@ -53,9 +53,9 @@ void ZServo::attach(int8_t pin) {
   _pin = pin;
   #if defined(__STM32F1__)
     #if SERVO_OPEN_DRAIN == 1
-    pinMode(_pin, OUTPUT_OPEN_DRAIN);   // set to Open Drain for the +5V pullup resistor
+      pinMode(_pin, OUTPUT_OPEN_DRAIN);   // set to Open Drain for the +5V pullup resistor
     #else
-    pinMode(_pin, OUTPUT);
+      pinMode(_pin, OUTPUT);
     #endif
   #else
     pinMode(_pin, OUTPUT);
@@ -100,17 +100,17 @@ bool ZServo::setServoPos(uint8_t degree) {
     return false;
 
   #if defined(__ESP32__)
-  if(!_useTimer) {
-    _pulseLen = (int)(((degree/(float)_maxDegree)*_maxPw)/(float)DUTY_CYCLE*65536.0) + ((65536.0/DUTY_CYCLE)*_minPw);
-    //__debug(PSTR("Servo %d: %d° = %d us (v:%d)"), _servoIndex, degree, (int)((float)_pulseLen / ((float)65536 / DUTY_CYCLE)), _pulseLen);
-  }
-  else {
-    _pulseLen = map(degree, _minDegree, _maxDegree, _minPw, _maxPw);
-    //__debug(PSTR("Servo %d: %d° = %d us"), _servoIndex, degree, _pulseLen);
-  }
+    if(!_useTimer) {
+      _pulseLen = (int)(((degree/(float)_maxDegree)*_maxPw)/(float)DUTY_CYCLE*65536.0) + ((65536.0/DUTY_CYCLE)*_minPw);
+      //__debug(PSTR("Servo %d: %d° = %d us (v:%d)"), _servoIndex, degree, (int)((float)_pulseLen / ((float)65536 / DUTY_CYCLE)), _pulseLen);
+    }
+    else {
+      _pulseLen = map(degree, _minDegree, _maxDegree, _minPw, _maxPw);
+      //__debug(PSTR("Servo %d: %d° = %d us"), _servoIndex, degree, _pulseLen);
+    }
   #else
-  _pulseLen = map(degree, _minDegree, _maxDegree, _minPw, _maxPw);
-  //__debug(PSTR("Servo %d: %d deg = %d us"), _servoIndex, degree, _pulseLen);
+    _pulseLen = map(degree, _minDegree, _maxDegree, _minPw, _maxPw);
+    //__debug(PSTR("Servo %d: %d deg = %d us"), _servoIndex, degree, _pulseLen);
   #endif
   _degree = degree;
   _lastUpdate = millis();
@@ -136,13 +136,13 @@ void ZServo::setServoMS(uint16_t microseconds) {
 void ZServo::setServo() {
   if(!_useTimer) {
     if(_degree != _lastDegree || millis() - _lastUpdate < 200) { // avoid jitter on servo by ignoring this call
-  #if defined(__ESP32__)
-      ledcWrite(SERVO_CHANNEL+_servoIndex, _pulseLen);
-  #else
-      digitalWrite(_pin, HIGH);
-      delayMicroseconds(_pulseLen);
-      digitalWrite(_pin, LOW);
-  #endif
+      #if defined(__ESP32__)
+        ledcWrite(SERVO_CHANNEL+_servoIndex, _pulseLen);
+      #else
+        digitalWrite(_pin, HIGH);
+        delayMicroseconds(_pulseLen);
+        digitalWrite(_pin, LOW);
+      #endif
       _lastDegree = _degree;
     }
   }
@@ -174,8 +174,8 @@ void ZServo::setServoPin(int8_t state) {
 
 void isrServoTimerHandler() {
   #if defined(__HW_DEBUG__) && defined(DEBUG_PIN)
-  // used for internal hardware debugging only
-  //if(DEBUG_PIN != -1) digitalWrite(DEBUG_PIN, !digitalRead(DEBUG_PIN));
+    // used for internal hardware debugging only
+    //if(DEBUG_PIN != -1) digitalWrite(DEBUG_PIN, !digitalRead(DEBUG_PIN));
   #endif
 
   // call all handlers for all servos periodically if the

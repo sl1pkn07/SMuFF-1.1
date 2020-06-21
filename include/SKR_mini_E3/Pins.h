@@ -21,96 +21,96 @@
  */
 #pragma once
 
-#define BOARD_INFO          "SKR mini E3 V1.2"
+#define BOARD_INFO            "SKR mini E3 V1.2"
 // SELECTOR (X)
-#define STEP_HIGH_X         digitalWrite(X_STEP_PIN, HIGH);
-#define STEP_LOW_X          digitalWrite(X_STEP_PIN, LOW);
-#define X_STEP_PIN          PB13
-#define X_DIR_PIN           PB12
-#define X_ENABLE_PIN        PB14
-#define X_END_PIN           PC0     // X-STOP
+#define STEP_HIGH_X           digitalWrite(X_STEP_PIN, HIGH);
+#define STEP_LOW_X            digitalWrite(X_STEP_PIN, LOW);
+#define X_STEP_PIN            PB13
+#define X_DIR_PIN             PB12
+#define X_ENABLE_PIN          PB14
+#define X_END_PIN             PC0     // X-STOP
 // REVOLVER (Y)
-#define STEP_HIGH_Y         digitalWrite(Y_STEP_PIN, HIGH);
-#define STEP_LOW_Y          digitalWrite(Y_STEP_PIN, LOW);
-#define Y_STEP_PIN          PB10
-#define Y_DIR_PIN           PB2
-#define Y_ENABLE_PIN        PB11
-#define Y_END_PIN           PC1     // Y-STOP
+#define STEP_HIGH_Y           digitalWrite(Y_STEP_PIN, HIGH);
+#define STEP_LOW_Y            digitalWrite(Y_STEP_PIN, LOW);
+#define Y_STEP_PIN            PB10
+#define Y_DIR_PIN             PB2
+#define Y_ENABLE_PIN          PB11
+#define Y_END_PIN             PC1     // Y-STOP
 // FEEDER (Z)
-#define STEP_HIGH_Z         digitalWrite(Z_STEP_PIN, HIGH);
-#define STEP_LOW_Z          digitalWrite(Z_STEP_PIN, LOW);
-#define Z_STEP_PIN          PB0
-#define Z_DIR_PIN           PC5
-#define Z_ENABLE_PIN        PB1
-#define Z_END_PIN           PC2     // Z-STOP
-#define Z_END2_PIN          PC15    // E0-STOP
-#define Z_END_DUET_PIN      Z_END2_PIN
+#define STEP_HIGH_Z           digitalWrite(Z_STEP_PIN, HIGH);
+#define STEP_LOW_Z            digitalWrite(Z_STEP_PIN, LOW);
+#define Z_STEP_PIN            PB0
+#define Z_DIR_PIN             PC5
+#define Z_ENABLE_PIN          PB1
+#define Z_END_PIN             PC2     // Z-STOP
+#define Z_END2_PIN            PC15    // E0-STOP
+#define Z_END_DUET_PIN        Z_END2_PIN
 
 // (E) - Not used yet, just in case
-#define STEP_HIGH_E         digitalWrite(E_STEP_PIN, HIGH);
-#define STEP_LOW_E          digitalWrite(E_STEP_PIN, LOW);
-#define E_STEP_PIN          PB3
-#define E_DIR_PIN           PB4
-#define E_ENABLE_PIN        PD2
-#define E_END_PIN           PC15    // E0-STOP
+#define STEP_HIGH_E           digitalWrite(E_STEP_PIN, HIGH);
+#define STEP_LOW_E            digitalWrite(E_STEP_PIN, LOW);
+#define E_STEP_PIN            PB3
+#define E_DIR_PIN             PB4
+#define E_ENABLE_PIN          PD2
+#define E_END_PIN             PC15    // E0-STOP
 
-#define BEEPER_PIN          PB5     // EXP1.10
+#define BEEPER_PIN            PB5     // EXP1.10
 
-#define RELAY_PIN          PC14    // PROBE (Relay for stepper motor switching)
+#define RELAY_PIN             PC14    // PROBE (Relay for stepper motor switching)
 
-#define SERVO_OPEN_DRAIN    0
-#define SERVO1_PIN          PC12    // PT-DET
-#define SERVO2_PIN          PA1     // SERVO
+#define SERVO_OPEN_DRAIN      0
+#define SERVO1_PIN            PC12    // PT-DET
+#define SERVO2_PIN            PA1     // SERVO
 
-#define FAN_PIN             PA8     // FAN0
-#define HEATER0_PIN         PC8     // HE0
-#define HEATBED_PIN         PC9     // BED
+#define FAN_PIN               PA8     // FAN0
+#define HEATER0_PIN           PC8     // HE0
+#define HEATBED_PIN           PC9     // BED
 
-#define SW_SERIAL_TX_PIN    PC7     // NEOPIXEL for testing only
-#define SW_SERIAL_RX_PIN    PC7     // NEOPIXEL for testing only
+#define SW_SERIAL_TX_PIN      PC7     // NEOPIXEL for testing only
+#define SW_SERIAL_RX_PIN      PC7     // NEOPIXEL for testing only
 
 #include "FastLED.h"
-_DEFPIN_ARM(PC7, 7, C);             // needed to compensate "Invalid pin specified" while compiling
+_DEFPIN_ARM(PC7, 7, C);               // needed to compensate "Invalid pin specified" while compiling
 
-#define NEOPIXEL_PIN        -1 //PC7     // NEOPIXEL
-#define NUM_LEDS            5       // number of Neopixel LEDS
-#define BRIGHTNESS          127
-#define LED_TYPE            WS2812B
-#define COLOR_ORDER         GRB
+#define NEOPIXEL_PIN          -1      //PC7     // NEOPIXEL
+#define NUM_LEDS              5       // number of Neopixel LEDS
+#define BRIGHTNESS            127
+#define LED_TYPE              WS2812B
+#define COLOR_ORDER           GRB
 
-#define SDCS_PIN            -1      // use default
+#define SDCS_PIN              -1      // use default
 
-#define USB_CONNECT_PIN     PC13
-#define SD_DETECT_PIN       PC4
+#define USB_CONNECT_PIN       PC13
+#define SD_DETECT_PIN         PC4
 
 #if defined(USE_CREALITY_DISPLAY)
-// LCD_PINS_EN = EXP1.3 = ST9720 DAT
-// LCD_PINS_RS = EXP1.4 = ST9720 CS
-// LCD_PINS_D4 = EXP1.5 = ST9720 CLK
-#define DSP_DATA_PIN        PB7     // EXP1.3
-#define DSP_CS_PIN          PB8     // EXP1.4
-#define DSP_DC_PIN          PB9     // EXP1.5
-#define DSP_RESET_PIN       -1
+  // LCD_PINS_EN = EXP1.3 = ST9720 DAT
+  // LCD_PINS_RS = EXP1.4 = ST9720 CS
+  // LCD_PINS_D4 = EXP1.5 = ST9720 CLK
+  #define DSP_DATA_PIN        PB7     // EXP1.3
+  #define DSP_CS_PIN          PB8     // EXP1.4
+  #define DSP_DC_PIN          PB9     // EXP1.5
+  #define DSP_RESET_PIN       -1
 
-#define ENCODER1_PIN        PA9     // EXP1.8
-#define ENCODER2_PIN        PA10    // EXP1.6
-#define ENCODER_BUTTON_PIN  PB6     // EXP1.9
+  #define ENCODER1_PIN        PA9     // EXP1.8
+  #define ENCODER2_PIN        PA10    // EXP1.6
+  #define ENCODER_BUTTON_PIN  PB6     // EXP1.9
 
-#define DEBUG_PIN           -1
+  #define DEBUG_PIN           -1
 
 #else // USE_TWI_DISPLAY
-#define DSP_SCL             PB6     // EXP1.9
-#define DSP_SDA             PB7     // EXP1.3
+  #define DSP_SCL             PB6     // EXP1.9
+  #define DSP_SDA             PB7     // EXP1.3
 
-#define DSP_CS_PIN          -1
-#define DSP_DC_PIN          -1
-#define DSP_RESET_PIN       -1
+  #define DSP_CS_PIN          -1
+  #define DSP_DC_PIN          -1
+  #define DSP_RESET_PIN       -1
 
-#define ENCODER1_PIN        PA9     // EXP1.8
-#define ENCODER2_PIN        PA10    // EXP1.6
-#define ENCODER_BUTTON_PIN  PB8     // EXP1.4
+  #define ENCODER1_PIN        PA9     // EXP1.8
+  #define ENCODER2_PIN        PA10    // EXP1.6
+  #define ENCODER_BUTTON_PIN  PB8     // EXP1.4
 
-#define DEBUG_PIN           PB9     // EXP1.5
+  #define DEBUG_PIN           PB9     // EXP1.5
 
 #endif
 

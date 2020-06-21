@@ -93,12 +93,12 @@ void parseGcode(const String& serialBuffer, int8_t serial) {
         //__debug(PSTR("Wait after 'T' 500ms"));
         delay(500);
         #if !defined(MARLIN2_ONLY)
-        if(currentLine > 0)
-          sprintf_P(ptmp, PSTR("M998 %d\n"), currentLine);
-        else
-          sprintf_P(ptmp, PSTR("M998\n"));
-        printResponseP(ptmp, serial);
-        //__debug(PSTR("Resend 'T' sent"));
+          if(currentLine > 0)
+            sprintf_P(ptmp, PSTR("M998 %d\n"), currentLine);
+          else
+            sprintf_P(ptmp, PSTR("M998\n"));
+            printResponseP(ptmp, serial);
+            //__debug(PSTR("Resend 'T' sent"));
         #endif
         return;
       }
@@ -106,8 +106,8 @@ void parseGcode(const String& serialBuffer, int8_t serial) {
     if(line.startsWith("U") || line.startsWith("C")) {
       if(!steppers[FEEDER].getMovementDone()) {
         #if !defined(MARLIN2_ONLY)
-        sendOkResponse(serial);
-        //__debug(PSTR("Cancelling U/C"));
+          sendOkResponse(serial);
+          //__debug(PSTR("Cancelling U/C"));
         #endif
         return;
       }

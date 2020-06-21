@@ -27,8 +27,8 @@
 #include "Config.h"
 #include "InputDialogs.h"
 
-#ifdef __ESP32__
-extern BluetoothSerial SerialBT;
+#if defined(__ESP32__)
+  extern BluetoothSerial SerialBT;
 #endif
 
 extern ZStepper       steppers[];
@@ -56,9 +56,9 @@ char PROGMEM          tuneUser[40]      = { "F1760D90P90.F440D90P90.F440D90P90."
 char PROGMEM          tuneBeep[20]      = { "F1760D90P200." };
 char PROGMEM          tuneLongBeep[20]  = { "F1760D450P500." };
 #if defined(USE_LEONERD_DISPLAY)
-char PROGMEM          tuneEncoder[20]   = { "F330D10P10." };
+  char PROGMEM        tuneEncoder[20]   = { "F330D10P10." };
 #else
-char PROGMEM          tuneEncoder[20]   = { "F1440D3." };
+  char PROGMEM        tuneEncoder[20]   = { "F1440D3." };
 #endif
 
 uint16_t              sequence[MAX_SEQUENCE][3];    // store for tune sequence for background playing
@@ -78,13 +78,13 @@ void setupDisplay() {
   // from the software side because of the 7-Bit address mode.
   // If it's configured at 0x7a, you need to change the I2C_DISPLAY_ADDRESS in Config.h to 0x3d.
   #if I2C_DISPLAY_ADDRESS != 0x3C
-  display.setI2CAddress(I2C_DISPLAY_ADDRESS);
+    display.setI2CAddress(I2C_DISPLAY_ADDRESS);
   #endif
   #if defined(USE_LEONERD_DISPLAY)
-  //display.setBusClock(400000);
-  display.begin();
+    //display.setBusClock(400000);
+    display.begin();
   #else
-  display.begin(/*Select=*/ ENCODER_BUTTON_PIN,  /* menu_next_pin= */ U8X8_PIN_NONE, /* menu_prev_pin= */ U8X8_PIN_NONE, /* menu_home_pin= */ U8X8_PIN_NONE);
+    display.begin(/*Select=*/ ENCODER_BUTTON_PIN,  /* menu_next_pin= */ U8X8_PIN_NONE, /* menu_prev_pin= */ U8X8_PIN_NONE, /* menu_home_pin= */ U8X8_PIN_NONE);
   #endif
   display.enableUTF8Print();
   resetDisplay();
@@ -158,27 +158,27 @@ void drawSDRemoved(bool removed) {
 void drawFeed() {
   char tmp[80];
   sprintf_P(tmp, PSTR("%-7s"), String(steppers[FEEDER].getStepsTakenMM()).c_str());
-#if defined(__STM32F1__) || defined(__ESP32__)
-  display.setFont(SMALL_FONT);
-  display.setFontMode(0);
-  display.setDrawColor(0);
-  uint16_t x = 0;
-  uint16_t y = display.getDisplayHeight()-display.getMaxCharHeight() + 2;
-  uint16_t w = 40;
-  uint16_t h = display.getMaxCharHeight();
-  display.drawBox(x, y, w, h);
-  display.drawStr(x+1, display.getDisplayHeight(), tmp);
-  display.sendBuffer();
-  //display.updateDisplayArea(x, y, w, h);
+  #if defined(__STM32F1__) || defined(__ESP32__)
+    display.setFont(SMALL_FONT);
+    display.setFontMode(0);
+    display.setDrawColor(0);
+    uint16_t x = 0;
+    uint16_t y = display.getDisplayHeight()-display.getMaxCharHeight() + 2;
+    uint16_t w = 40;
+    uint16_t h = display.getMaxCharHeight();
+    display.drawBox(x, y, w, h);
+    display.drawStr(x+1, display.getDisplayHeight(), tmp);
+    display.sendBuffer();
+    //display.updateDisplayArea(x, y, w, h);
 
-#else
-  display.setFont(STATUS_FONT);
-  display.setFontMode(0);
-  display.setDrawColor(0);
-  display.drawBox(62, 24, display.getDisplayWidth(), display.getMaxCharHeight()-2);
-  display.setDrawColor(1);
-  display.drawStr(62, 34, tmp);
-#endif
+  #else
+    display.setFont(STATUS_FONT);
+    display.setFontMode(0);
+    display.setDrawColor(0);
+    display.drawBox(62, 24, display.getDisplayWidth(), display.getMaxCharHeight()-2);
+    display.setDrawColor(1);
+    display.drawStr(62, 34, tmp);
+  #endif
 }
 
 uint8_t duetTurn = 0;
@@ -1366,13 +1366,13 @@ bool selectTool(int8_t ndx, bool showMessage) {
     prepSteppingAbsMillimeter(SELECTOR, smuffConfig.firstToolOffset + (ndx * smuffConfig.toolSpacing));
     remainingSteppersFlag |= _BV(SELECTOR);
     #if !defined(SMUFF_V5)
-    if(!smuffConfig.resetBeforeFeed) {
-      prepSteppingAbs(REVOLVER, smuffConfig.firstRevolverOffset + (ndx *smuffConfig.revolverSpacing), true);
-      remainingSteppersFlag |= _BV(REVOLVER);
-    }
-    runAndWait(-1);
+      if(!smuffConfig.resetBeforeFeed) {
+        prepSteppingAbs(REVOLVER, smuffConfig.firstRevolverOffset + (ndx *smuffConfig.revolverSpacing), true);
+        remainingSteppersFlag |= _BV(REVOLVER);
+      }
+      runAndWait(-1);
     #else
-    runAndWait(SELECTOR);
+      runAndWait(SELECTOR);
     #endif
     //__debug(PSTR("Selector in position: %d"), ndx);
     if(smuffConfig.stepperStall[SELECTOR] > 0) {
@@ -1581,26 +1581,26 @@ void printPos(int8_t index, int8_t serial) {
 }
 
 
-#ifdef __STM32F1__
-/*
-  Simple wrapper for tone()
-*/
-void playTone(int8_t pin, int16_t freq, int16_t duration) {
-#if defined(USE_LEONERD_DISPLAY)
-  encoder.playFrequency(freq, duration);
-#else
-  if(pin != -1)
-    tone(pin, freq, duration);
-#endif
-}
+#if defined(__STM32F1__)
+  /*
+    Simple wrapper for tone()
+  */
+  void playTone(int8_t pin, int16_t freq, int16_t duration) {
+  #if defined(USE_LEONERD_DISPLAY)
+    encoder.playFrequency(freq, duration);
+  #else
+    if(pin != -1)
+      tone(pin, freq, duration);
+  #endif
+  }
 
-void muteTone(int8_t pin) {
-#if defined(USE_LEONERD_DISPLAY)
-  encoder.muteTone();
-#else
-  if(pin != -1)
-    pinMode(pin, INPUT);
-#endif
+  void muteTone(int8_t pin) {
+  #if defined(USE_LEONERD_DISPLAY)
+    encoder.muteTone();
+  #else
+    if(pin != -1)
+      pinMode(pin, INPUT);
+  #endif
 }
 #endif
 
@@ -1614,7 +1614,7 @@ void beep(uint8_t count) {
 
 void longBeep(uint8_t count) {
   #if defined(USE_LEONERD_DISPLAY)
-  encoder.setLED(LED_RED, true);
+    encoder.setLED(LED_RED, true);
   #endif
   prepareSequence(tuneLongBeep, false);
   for (uint8_t i = 0; i < count; i++) {
@@ -1624,7 +1624,7 @@ void longBeep(uint8_t count) {
 
 void userBeep() {
   #if defined(USE_LEONERD_DISPLAY)
-  encoder.setLED(LED_RED, true);
+    encoder.setLED(LED_RED, true);
   #endif
   prepareSequence(tuneUser, false);
   playSequence(true);
@@ -1637,7 +1637,7 @@ void encoderBeep(uint8_t count) {
 
 void startupBeep() {
   #if defined(USE_LEONERD_DISPLAY)
-  showLed(4, 1);
+    showLed(4, 1);
   #endif
   prepareSequence(tuneStartup, true);
 }
@@ -1651,10 +1651,10 @@ void startupBeep() {
            The '.' at the end of a tone is needed to play that tone and must not be omitted.
 */
 void prepareSequence(const char* seq, bool autoPlay) {
-#if !defined(USE_LEONERD_DISPLAY)
-  if(BEEPER_PIN == -1)
-    return;
-#endif
+  #if !defined(USE_LEONERD_DISPLAY)
+    if(BEEPER_PIN == -1)
+      return;
+  #endif
   uint16_t f=0, d=0, p=0;
   uint8_t n=0;
   startSequence = false;
@@ -1777,17 +1777,17 @@ void setServoMaxPwm(int8_t servoNum, uint16_t pwm) {
 
 bool setServoPos(int8_t servoNum, uint8_t degree) {
   #if defined(MULTISERVO)
-  uint16_t pulseLen = map(degree, 0, 180, smuffConfig.servoMinPwm, smuffConfig.servoMaxPwm);
+    uint16_t pulseLen = map(degree, 0, 180, smuffConfig.servoMinPwm, smuffConfig.servoMaxPwm);
   #endif
 
   if(servoNum == 0) {
     #if defined(MULTISERVO)
-    if(servoMapping[16] != -1) {
-      servoPwm.writeMicroseconds(servoMapping[16], pulseLen);
-    }
+      if(servoMapping[16] != -1) {
+        servoPwm.writeMicroseconds(servoMapping[16], pulseLen);
+      }
     #else
-    servo.write(degree);
-    delay(250);
+      servo.write(degree);
+      delay(250);
     #endif
     return true;
   }
@@ -1798,11 +1798,11 @@ bool setServoPos(int8_t servoNum, uint8_t degree) {
   }
   else if(servoNum >= 10 && servoNum <= 26) {
     #if defined(MULTISERVO)
-    uint8_t servo = servoMapping[servoNum-10];
-    //__debug(PSTR("Servo mapping: %d -> %d (pulse len: %d ms: %d)"), servoNum-10, servo, pulseLen, ms);
-    if(servo != -1)
-      servoPwm.writeMicroseconds(servo, pulseLen);
-    return true;
+      uint8_t servo = servoMapping[servoNum-10];
+      //__debug(PSTR("Servo mapping: %d -> %d (pulse len: %d ms: %d)"), servoNum-10, servo, pulseLen, ms);
+      if(servo != -1)
+        servoPwm.writeMicroseconds(servo, pulseLen);
+      return true;
     #endif
   }
   return false;
@@ -1811,23 +1811,23 @@ bool setServoPos(int8_t servoNum, uint8_t degree) {
 bool setServoMS(int8_t servoNum, uint16_t microseconds) {
   if(servoNum == 0) {
     #if defined(MULTISERVO)
-    if(servoMapping[16] != -1) {
-      servoPwm.writeMicroseconds(servoMapping[16], microseconds);
-    }
+      if(servoMapping[16] != -1) {
+        servoPwm.writeMicroseconds(servoMapping[16], microseconds);
+      }
     #else
-    servo.writeMicroseconds(microseconds);
-    delay(250);
+      servo.writeMicroseconds(microseconds);
+      delay(250);
     #endif
     return true;
   }
   else if(servoNum == 1) {
     #if defined(MULTISERVO)
-    uint8_t servo = servoMapping[servoNum-10];
-    if(servo != -1)
-      servoPwm.writeMicroseconds(servo, microseconds);
+      uint8_t servo = servoMapping[servoNum-10];
+      if(servo != -1)
+        servoPwm.writeMicroseconds(servo, microseconds);
     #else
-    servoLid.writeMicroseconds(microseconds);
-    delay(250);
+      servoLid.writeMicroseconds(microseconds);
+      delay(250);
     #endif
     return true;
   }
@@ -1891,11 +1891,11 @@ void listDir(File root, int8_t numTabs, int8_t serial) {
       //listDir(entry, numTabs + 1, serial);
     }
     else {
-#if defined(__ESP32__)
-      sprintf_P(tmp, PSTR("\t\t%u\r\n"), entry.size());
-#else
-      sprintf_P(tmp, PSTR("\t\t%lu\r\n"), entry.size());
-#endif
+      #if defined(__ESP32__)
+        sprintf_P(tmp, PSTR("\t\t%u\r\n"), entry.size());
+      #else
+        sprintf_P(tmp, PSTR("\t\t%lu\r\n"), entry.size());
+      #endif
       printResponse(tmp, serial);
     }
     entry.close();
@@ -2366,36 +2366,36 @@ unsigned long translateSpeed(uint16_t speed, uint8_t axis) {
 
 void setMotor(uint8_t pos) {
   #if defined(MOTOR_IN1_PIN) && defined(MOTOR_IN2_PIN)
-  if(pos == SERVO_OPEN) {
-    // move forward
-    digitalWrite(MOTOR_IN1_PIN, HIGH);
-    digitalWrite(MOTOR_IN2_PIN, LOW);
-  }
-  else {
-    // move backward
+    if(pos == SERVO_OPEN) {
+      // move forward
+      digitalWrite(MOTOR_IN1_PIN, HIGH);
+      digitalWrite(MOTOR_IN2_PIN, LOW);
+    }
+    else {
+      // move backward
+      digitalWrite(MOTOR_IN1_PIN, LOW);
+      digitalWrite(MOTOR_IN2_PIN, HIGH);
+    }
+    delay(smuffConfig.motorOnDelay);
+    // stop moving
     digitalWrite(MOTOR_IN1_PIN, LOW);
-    digitalWrite(MOTOR_IN2_PIN, HIGH);
-  }
-  delay(smuffConfig.motorOnDelay);
-  // stop moving
-  digitalWrite(MOTOR_IN1_PIN, LOW);
-  digitalWrite(MOTOR_IN2_PIN, LOW);
+    digitalWrite(MOTOR_IN2_PIN, LOW);
   #endif
 }
 
 void setServoLid(uint8_t pos) {
   #if !defined(MULTISERVO)
-  uint8_t posForTool = servoPosClosed[toolSelected];
-  uint8_t p;
-  if(posForTool == 0)
-    p = (pos == SERVO_OPEN) ? smuffConfig.revolverOffPos : smuffConfig.revolverOnPos;
-  else
-    p = (pos == SERVO_OPEN) ? smuffConfig.revolverOffPos : posForTool;
-  setServoPos(SERVO_LID, p);
+    uint8_t posForTool = servoPosClosed[toolSelected];
+    uint8_t p;
+    if(posForTool == 0)
+      p = (pos == SERVO_OPEN) ? smuffConfig.revolverOffPos : smuffConfig.revolverOnPos;
+    else
+      p = (pos == SERVO_OPEN) ? smuffConfig.revolverOffPos : posForTool;
+    setServoPos(SERVO_LID, p);
   #else
-  uint8_t p = (pos == SERVO_OPEN) ? servoPosClosed[toolSelected]-SERVO_CLOSED_OFS : servoPosClosed[toolSelected];
-  //__debug(PSTR("Tool%d = %d"), toolSelected, p);
-  setServoPos(toolSelected+10, p);
+    uint8_t p = (pos == SERVO_OPEN) ? servoPosClosed[toolSelected]-SERVO_CLOSED_OFS : servoPosClosed[toolSelected];
+    //__debug(PSTR("Tool%d = %d"), toolSelected, p);
+    setServoPos(toolSelected+10, p);
   #endif
   lidOpen = pos == SERVO_OPEN;
 
@@ -2429,15 +2429,15 @@ extern Stream* logSerial;
 void __debug(const char* fmt, ...) {
   if(debugSerial == nullptr)
     return;
-#ifdef DEBUG
-  char _dbg[512];
-  va_list arguments;
-  va_start(arguments, fmt);
-  vsnprintf_P(_dbg, ArraySize(_dbg)-1, fmt, arguments);
-  va_end (arguments);
-  debugSerial->print(F("echo: dbg: "));
-  debugSerial->println(_dbg);
-#endif
+  #if defined(DEBUG)
+    char _dbg[512];
+    va_list arguments;
+    va_start(arguments, fmt);
+    vsnprintf_P(_dbg, ArraySize(_dbg)-1, fmt, arguments);
+    va_end (arguments);
+    debugSerial->print(F("echo: dbg: "));
+    debugSerial->println(_dbg);
+  #endif
 }
 
 void __log(const char* fmt, ...) {
@@ -2450,4 +2450,3 @@ void __log(const char* fmt, ...) {
   va_end (arguments);
   logSerial->print(_log);
 }
-

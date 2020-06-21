@@ -19,20 +19,20 @@
 #include "SMuFF.h"
 
 #if defined(__STM32F1__)
-#include <../stm32f1/include/series/nvic.h>
-#define PRODUCT_ID   0x29                     // for CompositeSerial
+  #include <../stm32f1/include/series/nvic.h>
+  #define PRODUCT_ID   0x29                     // for CompositeSerial
 #endif
 
 #if defined(USE_COMPOSITE_SERIAL)
-extern SdFs SD;
+  extern SdFs SD;
 
-bool writeSDCard(const uint8_t *writebuff, uint32_t startSector, uint16_t numSectors) {
-  return SD.card()->writeSectors(startSector, writebuff, numSectors);
-}
+  bool writeSDCard(const uint8_t *writebuff, uint32_t startSector, uint16_t numSectors) {
+    return SD.card()->writeSectors(startSector, writebuff, numSectors);
+  }
 
-bool readSDCard(uint8_t *readbuff, uint32_t startSector, uint16_t numSectors) {
-  return SD.card()->readSectors(startSector, readbuff, numSectors);
-}
+  bool readSDCard(uint8_t *readbuff, uint32_t startSector, uint16_t numSectors) {
+    return SD.card()->readSectors(startSector, readbuff, numSectors);
+  }
 #endif
 
 void initUSB() {
@@ -45,38 +45,38 @@ void initUSB() {
   }
 
   #if defined(USE_COMPOSITE_SERIAL)
-  /* Not tested yet */
-  bool sdStat = initSD(false);
-  __debug(PSTR("SD status"), sdStat);
-  if(sdStat) {
-    USBComposite.setProductId(PRODUCT_ID);
-    MassStorage.setDriveData(0, SD.card()->sectorCount(), readSDCard, writeSDCard);
-    MassStorage.registerComponent();
-    CompositeSerial.registerComponent();
-    USBComposite.begin();
-    __debug(PSTR("USB Composite started"));
-    delay(2000);
-  }
+    /* Not tested yet */
+    bool sdStat = initSD(false);
+    __debug(PSTR("SD status"), sdStat);
+    if(sdStat) {
+      USBComposite.setProductId(PRODUCT_ID);
+      MassStorage.setDriveData(0, SD.card()->sectorCount(), readSDCard, writeSDCard);
+      MassStorage.registerComponent();
+      CompositeSerial.registerComponent();
+      USBComposite.begin();
+      __debug(PSTR("USB Composite started"));
+      delay(2000);
+    }
+    #endif
   #endif
-#endif
 }
 
 void setupDeviceName() {
   String appendix = "";
-#if defined(__ESP32__)
-  appendix = WiFi.macAddress().substring(9);
-  appendix.replace(":", "");
-#endif
+  #if defined(__ESP32__)
+    appendix = WiFi.macAddress().substring(9);
+    appendix.replace(":", "");
+  #endif
   wirelessHostname = String("SMuFF") + "_" + appendix;
 }
 
 void setupBuzzer() {
   if(BEEPER_PIN != -1) {
-#if defined(__ESP32__)
-    ledcSetup(BEEPER_CHANNEL, 5000, 8);
-    ledcAttachPin(BEEPER_PIN, BEEPER_CHANNEL);
-#else
-#endif
+    #if defined(__ESP32__)
+      ledcSetup(BEEPER_CHANNEL, 5000, 8);
+      ledcAttachPin(BEEPER_PIN, BEEPER_CHANNEL);
+    #else
+  #endif
   }
 }
 
@@ -115,8 +115,8 @@ void initFastLED() {
 */
 void initHwDebug() {
   #if defined(__HW_DEBUG__)
-  pinMode(DEBUG_PIN, OUTPUT);
-  digitalWrite(DEBUG_PIN, HIGH);
+    pinMode(DEBUG_PIN, OUTPUT);
+    digitalWrite(DEBUG_PIN, HIGH);
   #endif
 }
 
@@ -128,10 +128,10 @@ void setupDuetLaserSensor() {
 }
 
 void setupSerialBT() {
-#ifdef __ESP32__
-  // this line must be kept, otherwise BT power down will cause a reset
-  SerialBT.begin(wirelessHostname);
-#endif
+  #ifdef __ESP32__
+    // this line must be kept, otherwise BT power down will cause a reset
+    SerialBT.begin(wirelessHostname);
+  #endif
 }
 
 void setupSerial() {
@@ -142,13 +142,13 @@ void setupSerial() {
     if(smuffConfig.serialBaudrates[0] != 115200) {
       //__debug(PSTR("End SERIAL0 -> %ld"), smuffConfig.serialBaudrates[0]);
       #if defined(USE_COMPOSITE_SERIAL)
-      CompositeSerial.end();
-      delay(250);
-      CompositeSerial.begin(smuffConfig.serialBaudrate[0]);
+        CompositeSerial.end();
+        delay(250);
+        CompositeSerial.begin(smuffConfig.serialBaudrate[0]);
       #else
-      Serial.end();
-      delay(250);
-      Serial.begin(smuffConfig.serialBaudrates[0]);
+        Serial.end();
+        delay(250);
+        Serial.begin(smuffConfig.serialBaudrates[0]);
       #endif
     }
   }
@@ -187,9 +187,9 @@ void setupSerial() {
 }
 
 void setupSwSerial0() {
-#if defined(USE_SW_SERIAL)
-  swSer0.begin(TMC_BAUDRATE);
-#endif
+  #if defined(USE_SW_SERIAL)
+    swSer0.begin(TMC_BAUDRATE);
+  #endif
 }
 
 void setupRelay() {
@@ -229,42 +229,42 @@ void setupServos() {
   }
 
   #if !defined(MULTISERVO)
-  // setup the Lid servo (replaces the Revolver stepper motor)
-  if(SERVO2_PIN != -1) {
-    servoLid.setMaxCycles(smuffConfig.servoCycles2);
-    servoLid.setPulseWidthMinMax(smuffConfig.servoMinPwm, smuffConfig.servoMaxPwm);
-    #if defined(__ESP32__)
-      // we'll be using the internal ledcWrite for servo control on ESP32
-      servoLid.attach(SERVO2_PIN, false, 1);
-    #elif defined(__STM32F1__)
-      servoLid.attach(SERVO2_PIN, true, 1);
+    // setup the Lid servo (replaces the Revolver stepper motor)
+    if(SERVO2_PIN != -1) {
+      servoLid.setMaxCycles(smuffConfig.servoCycles2);
+      servoLid.setPulseWidthMinMax(smuffConfig.servoMinPwm, smuffConfig.servoMaxPwm);
+      #if defined(__ESP32__)
+        // we'll be using the internal ledcWrite for servo control on ESP32
+        servoLid.attach(SERVO2_PIN, false, 1);
+      #elif defined(__STM32F1__)
+        servoLid.attach(SERVO2_PIN, true, 1);
+      #else
+        servoLid.attach(SERVO2_PIN, true, 1);
+      #endif
+      setServoLid(SERVO_OPEN);
+    }
     #else
-      servoLid.attach(SERVO2_PIN, true, 1);
+      servoPwm.begin();
+      servoPwm.setOscillatorFrequency(27000000);
+      servoPwm.setPWMFreq(50);
+      for(uint8_t i=0; i< smuffConfig.toolCount; i++) {
+        setServoPos(i+10, servoPosClosed[i]);
+        delay(400);
+        setServoPos(i+10, servoPosClosed[i]+SERVO_CLOSED_OFS);
+      }
     #endif
-    setServoLid(SERVO_OPEN);
   }
-  #else
-  servoPwm.begin();
-  servoPwm.setOscillatorFrequency(27000000);
-  servoPwm.setPWMFreq(50);
-  for(uint8_t i=0; i< smuffConfig.toolCount; i++) {
-    setServoPos(i+10, servoPosClosed[i]);
-    delay(400);
-    setServoPos(i+10, servoPosClosed[i]-SERVO_CLOSED_OFS);
-  }
-  #endif
-}
 
 void setupHBridge() {
   #if defined(MOTOR_IN1_PIN) && defined(MOTOR_IN2_PIN)
-  if(MOTOR_IN1_PIN != -1) {
-    pinMode(MOTOR_IN1_PIN, OUTPUT);
-    digitalWrite(MOTOR_IN1_PIN, LOW);
-  }
-  if(MOTOR_IN2_PIN != -1) {
-    pinMode(MOTOR_IN2_PIN, OUTPUT);
-    digitalWrite(MOTOR_IN2_PIN, LOW);
-  }
+    if(MOTOR_IN1_PIN != -1) {
+      pinMode(MOTOR_IN1_PIN, OUTPUT);
+      digitalWrite(MOTOR_IN1_PIN, LOW);
+    }
+    if(MOTOR_IN2_PIN != -1) {
+      pinMode(MOTOR_IN2_PIN, OUTPUT);
+      digitalWrite(MOTOR_IN2_PIN, LOW);
+    }
   #endif
 }
 
@@ -291,23 +291,23 @@ void setupHeaterBed() {
 void setupFan() {
 
   if(FAN_PIN != -1) {
-  #ifdef __STM32F1__
-    fan.attach(FAN_PIN, 0);
-  #elif defined(__ESP32__)
-    ledcSetup(FAN_CHANNEL, FAN_FREQ, 8);
-    ledcAttachPin(FAN_PIN, FAN_CHANNEL);
-    //__debug(PSTR("DONE FAN PIN CONFIG"));
-  #else
-    pinMode(FAN_PIN, OUTPUT);
-  #endif
+    #if defined(__STM32F1__)
+      fan.attach(FAN_PIN, 0);
+    #elif defined(__ESP32__)
+      ledcSetup(FAN_CHANNEL, FAN_FREQ, 8);
+      ledcAttachPin(FAN_PIN, FAN_CHANNEL);
+      //__debug(PSTR("DONE FAN PIN CONFIG"));
+    #else
+      pinMode(FAN_PIN, OUTPUT);
+    #endif
     if(smuffConfig.fanSpeed >= 0 && smuffConfig.fanSpeed <= 100) {
-      #if defined (__ESP32__)
-      ledcWrite(FAN_PIN, map(smuffConfig.fanSpeed, 0, 100, 0, 65535));
+      #if defined(__ESP32__)
+        ledcWrite(FAN_PIN, map(smuffConfig.fanSpeed, 0, 100, 0, 65535));
       #elif defined(__STM32F1__)
-      //pwmWrite(FAN_PIN, map(smuffConfig.fanSpeed, 0, 100, 0, 65535));
-      fan.setFanSpeed(smuffConfig.fanSpeed);
+        //pwmWrite(FAN_PIN, map(smuffConfig.fanSpeed, 0, 100, 0, 65535));
+        fan.setFanSpeed(smuffConfig.fanSpeed);
       #else
-      analogWrite(FAN_PIN, map(smuffConfig.fanSpeed, 0, 100, 0, 255));
+        analogWrite(FAN_PIN, map(smuffConfig.fanSpeed, 0, 100, 0, 255));
       #endif
     }
   }
@@ -316,71 +316,71 @@ void setupFan() {
 
 void setupPortExpander() {
   #if defined(__ESP32__)
-  // init the PCF8574 port expander and set pin modes (0-5 OUTPUT, 6-7 INPUT)
-  portEx.begin(PORT_EXPANDER_ADDRESS, false);
-  for(uint8_t i=0; i< 6; i++) {
-    portEx.pinMode(i, OUTPUT);
-    portEx.setPin(i);
-  }
-  portEx.pinMode(6, INPUT_PULLUP);
-  portEx.pinMode(7, INPUT_PULLUP);
-  portEx.resetPin(0);
-  //__debug(PSTR("DONE PortExpander init"));
+    // init the PCF8574 port expander and set pin modes (0-5 OUTPUT, 6-7 INPUT)
+    portEx.begin(PORT_EXPANDER_ADDRESS, false);
+    for(uint8_t i=0; i< 6; i++) {
+      portEx.pinMode(i, OUTPUT);
+      portEx.setPin(i);
+    }
+    portEx.pinMode(6, INPUT_PULLUP);
+    portEx.pinMode(7, INPUT_PULLUP);
+    portEx.resetPin(0);
+    //__debug(PSTR("DONE PortExpander init"));
   #endif
 }
 
 void setupI2C() {
-  #ifdef __AVR__
-  // We can't do Master and Slave on this device.
-  // Slave mode is used for the I2C OLE Display on SKR mini
-  if(smuffConfig.i2cAddress != 0) {
-    Wire.begin(smuffConfig.i2cAddress);
-    Wire.onReceive(wireReceiveEvent);
-  }
-  //__debug(PSTR("DONE I2C init"));
- #endif
+  #if defined(__AVR__)
+    // We can't do Master and Slave on this device.
+    // Slave mode is used for the I2C OLE Display on SKR mini
+    if(smuffConfig.i2cAddress != 0) {
+      Wire.begin(smuffConfig.i2cAddress);
+      Wire.onReceive(wireReceiveEvent);
+    }
+    //__debug(PSTR("DONE I2C init"));
+  #endif
 }
 
 void setupBacklight() {
   #if defined(USE_RGB_BACKLIGHT) || defined(USE_FASTLED_BACKLIGHT)
-  for(uint8_t i=0; i< 8; i++) {
-    setBacklightIndex(i);                                 // flip through all colors
-    delay(250);
-  }
-  setBacklightIndex(smuffConfig.backlightColor);          // turn on the LCD backlight according to the configured setting
+    for(uint8_t i=0; i< 8; i++) {
+      setBacklightIndex(i);                                 // flip through all colors
+      delay(250);
+    }
+    setBacklightIndex(smuffConfig.backlightColor);          // turn on the LCD backlight according to the configured setting
   #endif
 }
 
 void setupEncoder() {
   #if defined(USE_LEONERD_DISPLAY)
-  encoder.begin();
-  uint8_t ver = encoder.queryVersion();
-  if(ver < 2) {
-    __debug(PSTR("Warning: Encoder version mismatch! Version is: %d"), ver);
-  }
-  else {
-    encoder.setKeyBeepMask(BEEP_NONE);
-    encoder.setButtonHoldTime(120);
-    /*
-    // check whether or not the left soft button is mapped to GPIO 2 (RESET)
-    uint8_t tmp = encoder.queryButtonMapping(LeftButton);
-    const char P_Reprog[] PROGMEM = { "Reprogramming Encoder button mapping %s" };
-    if(tmp != 1) {
-      // if not, program the ecnoder accordingly
-      __debug(P_Reprog,"");
-      encoder.setEepromValue(REG_EEPROM_BTN_MAPPING, 4);
+    encoder.begin();
+    uint8_t ver = encoder.queryVersion();
+    if(ver < 2) {
+      __debug(PSTR("Warning: Encoder version mismatch! Version is: %d"), ver);
+    }
+    else {
+      encoder.setKeyBeepMask(BEEP_NONE);
+      encoder.setButtonHoldTime(120);
+      /*
+      // check whether or not the left soft button is mapped to GPIO 2 (RESET)
+      uint8_t tmp = encoder.queryButtonMapping(LeftButton);
+      const char P_Reprog[] PROGMEM = { "Reprogramming Encoder button mapping %s" };
+      if(tmp != 1) {
+        // if not, program the ecnoder accordingly
+        __debug(P_Reprog,"");
+        encoder.setEepromValue(REG_EEPROM_BTN_MAPPING, 4);
+      }
 
+      tmp = encoder.queryButtonMappingPolarity(LeftButton);
+      if(tmp != 1) {
+        __debug(P_Reprog,"polarity");
+        encoder.setEepromValue(REG_EEPROM_BTN_POLARITY, 4);
+      }
+      */
     }
-    tmp = encoder.queryButtonMappingPolarity(LeftButton);
-    if(tmp != 1) {
-      __debug(P_Reprog,"polarity");
-      encoder.setEepromValue(REG_EEPROM_BTN_POLARITY, 4);
-    }
-    */
-  }
-  encoder.setDoubleClickEnabled(true);
+    encoder.setDoubleClickEnabled(true);
   #else
-  encoder.setDoubleClickEnabled(true);                    // enable doubleclick on the rotary encoder
+    encoder.setDoubleClickEnabled(true);                    // enable doubleclick on the rotary encoder
   #endif
 }
 
@@ -503,17 +503,17 @@ TMC2209Stepper* initDriver(uint8_t axis, int8_t rx_pin, int8_t tx_pin) {
     return nullptr;
   }
   #if defined(TMC_SERIAL) && defined(TMC_HW_SERIAL)
-  TMC2209Stepper* driver = new TMC2209Stepper(TMC_SERIAL, rsense, drvrAdr);
+    TMC2209Stepper* driver = new TMC2209Stepper(TMC_SERIAL, rsense, drvrAdr);
   #else
-  TMC2209Stepper* driver = new TMC2209Stepper(rx_pin, tx_pin, rsense, drvrAdr);
+    TMC2209Stepper* driver = new TMC2209Stepper(rx_pin, tx_pin, rsense, drvrAdr);
   #endif
   //__debug(PSTR("Driver for %c-axis initialized"), 'X'+axis);
 
   steppers[axis].setEnabled(true);
   #if defined(TMC_SERIAL) && defined(TMC_HW_SERIAL)
-  driver->beginSerial(TMC_HW_BAUDRATE);
+    driver->beginSerial(TMC_HW_BAUDRATE);
   #else
-  driver->beginSerial(TMC_SW_BAUDRATE);
+    driver->beginSerial(TMC_SW_BAUDRATE);
   #endif
   delay(50);
   driver->blank_time(36);
@@ -531,7 +531,7 @@ TMC2209Stepper* initDriver(uint8_t axis, int8_t rx_pin, int8_t tx_pin) {
   // otherwise put it in SpreadCycle mode
   if(tmode) {
     #if defined(TMC_TYPE_2130)
-    stall = (uint8_t)map(stall, 1,  255, -63, 63);  // remap values for TMC2130 (not tested yet!)
+      stall = (uint8_t)map(stall, 1,  255, -63, 63);  // remap values for TMC2130 (not tested yet!)
     #endif
     setDriverSpreadCycle(driver, false, stall, csmin, csmax, csdown, toff); // set StealthChop (enable StallGuard)
   }
@@ -573,13 +573,13 @@ void setupTMCDrivers() {
     drivers[FEEDER]   = initDriver(FEEDER,   -1, -1);
   #else
     #if defined(X_SERIAL_TX_PIN)
-    drivers[SELECTOR] = initDriver(SELECTOR, X_SERIAL_TX_PIN, X_SERIAL_TX_PIN);
+      drivers[SELECTOR] = initDriver(SELECTOR, X_SERIAL_TX_PIN, X_SERIAL_TX_PIN);
     #endif
     #if defined(Y_SERIAL_TX_PIN)
-    drivers[REVOLVER] = initDriver(REVOLVER, Y_SERIAL_TX_PIN, Y_SERIAL_TX_PIN);
+      drivers[REVOLVER] = initDriver(REVOLVER, Y_SERIAL_TX_PIN, Y_SERIAL_TX_PIN);
     #endif
     #if defined(Z_SERIAL_TX_PIN)
-    drivers[FEEDER] = initDriver(FEEDER,   Z_SERIAL_TX_PIN, Z_SERIAL_TX_PIN);
+      drivers[FEEDER] = initDriver(FEEDER,   Z_SERIAL_TX_PIN, Z_SERIAL_TX_PIN);
     #endif
   #endif
 
@@ -628,7 +628,7 @@ void setupTimers() {
   stepperTimer.setupTimer(ZTimer::ZTIMER2, ZTimer::CH1, STEPPER_PSC, 1);   // prescaler set to STEPPER_PSC, timer will be calculated as needed
   gpTimer.setupTimer(ZTimer::ZTIMER8, ZTimer::CH1, 8, 0);                  // prescaler set to 9MHz, timer will be set to 50uS
   #if !defined(USE_LEONERD_DISPLAY)
-  setToneTimerChannel(ZTimer::ZTIMER4, ZTimer::CH3);                       // force TIMER4 / CH3 on STM32F1x for tone library
+    setToneTimerChannel(ZTimer::ZTIMER4, ZTimer::CH3);                     // force TIMER4 / CH3 on STM32F1x for tone library
   #endif
   nvic_irq_set_priority(NVIC_TIMER8_CC, 0);
   nvic_irq_set_priority(NVIC_TIMER2, 1);

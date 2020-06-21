@@ -39,11 +39,11 @@ uint8_t        menuOrdinals[MAX_MENU_ORDINALS];
 
 void checkMenuSize(const char* PROGMEM name, char* menu, size_t size) {
   #if defined(CHECK_MENU)
-  if(strlen(menu) > size) {
-    char tmp[80];
-    sprintf_P(tmp, name);
-    __debug(PSTR("Overrun in %s Menu: size=%d len=%d\n"), tmp, size, strlen(menu));
-  }
+    if(strlen(menu) > size) {
+      char tmp[80];
+      sprintf_P(tmp, name);
+      __debug(PSTR("Overrun in %s Menu: size=%d len=%d\n"), tmp, size, strlen(menu));
+    }
   #endif
 }
 
@@ -121,14 +121,14 @@ void setupToolsMenu(char* menu) {
 }
 
 void setupMainMenu(char* menu) {
-    char motors[10];
-    char servo[30];
-    char maint[10];
-    char pmmu[30] = "";
+  char motors[10];
+  char servo[30];
+  char maint[10];
+  char pmmu[30] = "";
 
-    steppers[SELECTOR].getEnabled() ? sprintf_P(motors, P_Off) : sprintf_P(motors, P_On);
-    lidOpen ? sprintf_P(servo, P_Close) : sprintf_P(servo, P_Open);
-    maintainingMode ? sprintf_P(maint, P_Off) : sprintf_P(maint, P_On);
+  steppers[SELECTOR].getEnabled() ? sprintf_P(motors, P_Off) : sprintf_P(motors, P_On);
+  lidOpen ? sprintf_P(servo, P_Close) : sprintf_P(servo, P_Open);
+  maintainingMode ? sprintf_P(maint, P_Off) : sprintf_P(maint, P_On);
 
   if(smuffConfig.revolverIsServo && smuffConfig.prusaMMU2) {
     sprintf(menu, loadMenu(P_MnuMain0, menuOrdinals), motors, servo, maint);
@@ -220,11 +220,11 @@ void setupServoMenu(char* menu) {
     smuffConfig.resetBeforeFeed ? P_Yes : P_No,
     smuffConfig.revolverIsServo ? P_Yes : P_No,
     #if defined(MULTISERVO)
-    servoPosClosed[toolSelected]-SERVO_CLOSED_OFS,
-    servoPosClosed[toolSelected],
+      servoPosClosed[toolSelected]-SERVO_CLOSED_OFS,
+      servoPosClosed[toolSelected],
     #else
-    smuffConfig.revolverOffPos,
-    servoPosClosed[toolSelected] == 0 ? smuffConfig.revolverOnPos : servoPosClosed[toolSelected],
+      smuffConfig.revolverOffPos,
+      servoPosClosed[toolSelected] == 0 ? smuffConfig.revolverOnPos : servoPosClosed[toolSelected],
     #endif
     smuffConfig.servoCycles1,
     smuffConfig.servoCycles2
@@ -321,7 +321,7 @@ void showMainMenu() {
     sprintf_P(_title, P_TitleMainMenu);
     setupMainMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuMain0, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuMain0, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -422,7 +422,7 @@ void showTestrunMenu(char* menuTitle) {
   while(!stopMenu) {
     setupTestrunMenu(_menu, 20);
     #if defined(CHECK_MENU)
-    checkMenuSize(PSTR("Testrun"), _menu, ArraySize(_menu));
+      checkMenuSize(PSTR("Testrun"), _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -562,9 +562,9 @@ bool selectBacklightColor(int color, char* menuTitle) {
 
 void positionServoCallback(int val) {
   #if defined(MULTISERVO)
-  setServoPos(toolSelected+10, val);
+    setServoPos(toolSelected+10, val);
   #else
-  setServoPos(SERVO_LID, val);
+    setServoPos(SERVO_LID, val);
   #endif
 }
 
@@ -582,7 +582,7 @@ void showTMCMenu(char* menuTitle, uint8_t axis) {
   while(!stopMenu) {
     setupTMCMenu(_menu, axis);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuTmc, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuTmc, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -727,7 +727,7 @@ void showServoMenu(char* menuTitle) {
   while(!stopMenu) {
     setupServoMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuServo, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuServo, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -756,7 +756,7 @@ void showServoMenu(char* menuTitle) {
               smuffConfig.resetBeforeFeed = bVal;
             break;
 
-        case 4: // Use Servo
+          case 4: // Use Servo
             bVal = smuffConfig.revolverIsServo;
             if(showInputDialog(title, P_YesNo, &bVal))
               smuffConfig.revolverIsServo = bVal;
@@ -764,31 +764,31 @@ void showServoMenu(char* menuTitle) {
 
         case 5: // Servo open
             #if !defined(MULTISERVO)
-            iVal = smuffConfig.revolverOffPos;
-            if(showInputDialog(title, P_OpenPos, &iVal, 0, 180, positionServoCallback)) {
-              smuffConfig.revolverOffPos = (uint8_t)iVal;
-            }
-            #endif
+              iVal = smuffConfig.revolverOffPos;
+              if(showInputDialog(title, P_OpenPos, &iVal, 0, 180, positionServoCallback)) {
+                smuffConfig.revolverOffPos = (uint8_t)iVal;
+              }
+              #endif
             break;
 
         case 6: // Servo closed
             #if defined(MULTISERVO)
-            iVal = servoPosClosed[toolSelected];
+              iVal = servoPosClosed[toolSelected];
             #else
-            posForTool = servoPosClosed[toolSelected];
-            iVal = posForTool == 0 ? smuffConfig.revolverOnPos : posForTool;
+              posForTool = servoPosClosed[toolSelected];
+              iVal = posForTool == 0 ? smuffConfig.revolverOnPos : posForTool;
             #endif
             if(showInputDialog(title, P_ClosedPos, &iVal, 0, 180, positionServoCallback)) {
               #if defined(MULTISERVO)
-              servoPosClosed[toolSelected] = (uint8_t)iVal;
+                servoPosClosed[toolSelected] = (uint8_t)iVal;
               #else
-              servoPosClosed[toolSelected] = (uint8_t)iVal;
-              smuffConfig.revolverOnPos = (uint8_t)iVal;
+                servoPosClosed[toolSelected] = (uint8_t)iVal;
+                smuffConfig.revolverOnPos = (uint8_t)iVal;
               #endif
             }
             break;
 
-        case 7: // Servo 1 cycles
+          case 7: // Servo 1 cycles
             iVal = smuffConfig.servoCycles1;
             if(showInputDialog(title, P_ServoCycles, &iVal, 0, 50)) {
               smuffConfig.servoCycles1 = (uint8_t)iVal;
@@ -796,7 +796,7 @@ void showServoMenu(char* menuTitle) {
             }
             break;
 
-        case 8: // Servo 2 cycles
+          case 8: // Servo 2 cycles
             iVal = smuffConfig.servoCycles2;
             if(showInputDialog(title, P_ServoCycles, &iVal, 0, 50)) {
               smuffConfig.servoCycles2 = (uint8_t)iVal;
@@ -822,7 +822,7 @@ void showRevolverMenu(char* menuTitle) {
   while(!stopMenu) {
     setupRevolverMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuRevolver, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuRevolver, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -954,7 +954,7 @@ void showSelectorMenu(char* menuTitle) {
   while(!stopMenu) {
     setupSelectorMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuSelector, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuSelector, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -1062,7 +1062,7 @@ void showFeederMenu(char* menuTitle) {
   while(!stopMenu) {
     setupFeederMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuFeeder, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuFeeder, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -1216,7 +1216,7 @@ void showSteppersMenu(char* menuTitle) {
   while(!stopMenu) {
     setupSteppersMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuSteppers, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuSteppers, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -1270,7 +1270,7 @@ void showDisplayMenu(char* menuTitle) {
   while(!stopMenu) {
     setupDisplayMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuDisplay, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuDisplay, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -1284,8 +1284,8 @@ void showDisplayMenu(char* menuTitle) {
       title = extractTitle(_menu, current_selection-1);
       switch(fnc) {
         case 1:
-            stopMenu = true;
-            break;
+          stopMenu = true;
+          break;
 
         case 2: // Power Save Timeout
             iVal = smuffConfig.powerSaveTimeout;
@@ -1319,9 +1319,9 @@ void saveSettings() {
   if(writeConfig()) {
     if(writeTmcConfig()){
       #if defined(MULTISERVO)
-      if(writeServoMapping()) {
-        stat = true;
-      }
+        if(writeServoMapping()) {
+          stat = true;
+        }
       #else
         stat = true;
       #endif
@@ -1363,7 +1363,7 @@ void showSettingsMenu(char* menuTitle) {
   while(!stopMenu) {
     setupSettingsMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuSettings, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuSettings, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -1437,11 +1437,11 @@ void showSettingsMenu(char* menuTitle) {
 
 void setLiveFanSpeed(int val) {
   #if defined (__STM32F1__)
-  fan.setFanSpeed(val);
-  #elif defined (__ESP32__)
-  ledcWrite(FAN_PIN, map(val, 0, 100, 0, 255));
+    fan.setFanSpeed(val);
+  #elif defined(__ESP32__)
+    ledcWrite(FAN_PIN, map(val, 0, 100, 0, 255));
   #else
-  analogWrite(FAN_PIN, map(val, 0, 100, 0, 255));
+    analogWrite(FAN_PIN, map(val, 0, 100, 0, 255));
   #endif
 }
 
@@ -1459,7 +1459,7 @@ void showOptionsMenu(char* menuTitle) {
   while(!stopMenu) {
     setupOptionsMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuOptions, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuOptions, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -1593,7 +1593,7 @@ void showSwapMenu(char* menuTitle) {
   while(!stopMenu) {
     setupSwapMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(PSTR("Swap"), _menu, ArraySize(_menu));
+      checkMenuSize(PSTR("Swap"), _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -1631,7 +1631,7 @@ void showBaudratesMenu(char* menuTitle) {
   while(!stopMenu) {
     setupBaudrateMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuBaudrates, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuBaudrates, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -1682,7 +1682,7 @@ void showStatusInfoMenu(char* menuTitle) {
   while(!stopMenu) {
     setupStatusInfoMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(P_MnuStatus, _menu, ArraySize(_menu));
+      checkMenuSize(P_MnuStatus, _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -1813,7 +1813,7 @@ void showToolsMenu() {
     sprintf_P(_title, P_TitleToolsMenu);
     setupToolsMenu(_menu);
     #if defined(CHECK_MENU)
-    checkMenuSize(PSTR("Tools"), _menu, ArraySize(_menu));
+      checkMenuSize(PSTR("Tools"), _menu, ArraySize(_menu));
     #endif
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -1874,9 +1874,9 @@ void resetAutoClose() {
 
 void debounceButton() {
   #if !defined(USE_LEONERD_DISPLAY)
-  delay(20);
-  while(getEncoderButton()) {
-      delay(20);
-  }
+    delay(20);
+    while(getEncoderButton()) {
+        delay(20);
+    }
   #endif
 }

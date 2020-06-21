@@ -48,10 +48,10 @@ bool LeoNerdBlinkRed    = false;
 
 void every1s() {
   #if defined(USE_LEONERD_DISPLAY)
-  if(LeoNerdBlinkGreen || LeoNerdBlinkRed) {
-    leoNerdBlinkState = !leoNerdBlinkState;
-    encoder.setLED((LeoNerdBlinkGreen ? LED_GREEN : LED_RED), leoNerdBlinkState);
-  }
+    if(LeoNerdBlinkGreen || LeoNerdBlinkRed) {
+      leoNerdBlinkState = !leoNerdBlinkState;
+      encoder.setLED((LeoNerdBlinkGreen ? LED_GREEN : LED_RED), leoNerdBlinkState);
+    }
   else {
     if(leoNerdBlinkState) {
       leoNerdBlinkState = false;
@@ -80,4 +80,3 @@ void every2s() {
 void every5s() {
   // Add your periodical code here
 }
-

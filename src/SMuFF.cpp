@@ -22,64 +22,101 @@
 
 // Please notice: If you make any changes / additions here, you'll have to add
 // an "external" declaration in SMuFF.h as well
-#ifdef __BRD_I3_MINI
-U8G2_ST7565_64128N_F_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+#if defined(__BRD_I3_MINI)
+  U8G2_ST7565_64128N_F_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
 #endif
 
 #if defined(__BRD_SKR_MINI) || defined(__BRD_SKR_MINI_E3) || defined(__BRD_SKR_MINI_E3DIP)
   #if defined(USE_TWI_DISPLAY)
-  U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+    U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
   #elif defined(USE_LEONERD_DISPLAY)
-  U8G2_SH1106_128X64_NONAME_F_HW_I2C display(U8G2_R2, /* reset=*/ U8X8_PIN_NONE);
+    U8G2_SH1106_128X64_NONAME_F_HW_I2C display(U8G2_R2, /* reset=*/ U8X8_PIN_NONE);
   #elif defined(USE_ANET_DISPLAY)
-  //
-  //  Attn.: Instructions to modify the ANET display can be found here: https://www.thingiverse.com/thing:4009810
-  //
-  #pragma error "Before you use this display, you have to make some heavy modifications on the wiring for the display connector! Please check, then comment out this line."
-  U8G2_ST7920_128X64_F_2ND_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* reset=*/ U8X8_PIN_NONE);
-  // if the hardware SPI doesn't work, you may try software SPI instead
-  //U8G2_ST7920_128X64_F_SW_SPI display(U8G2_R0, /* clock=*/ DSP_DC_PIN, /* data=*/ DSP_DATA_PIN, /* cs=*/ DSP_CS_PIN, /* reset=*/ U8X8_PIN_NONE);
-  #elif defined(USE_MINI12864_PANEL_V21) || defined(USE_MINI12864_PANEL_V20)
-  U8G2_ST7567_JLX12864_F_2ND_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+    //
+    //  Attn.: Instructions to modify the ANET display can be found here: https://www.thingiverse.com/thing:4009810
+    //
+    #pragma error "Before you use this display, you have to make some heavy modifications on the wiring for the display connector! Please check, then comment out this line."
+    U8G2_ST7920_128X64_F_2ND_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* reset=*/ U8X8_PIN_NONE);
+    // if the hardware SPI doesn't work, you may try software SPI instead
+    //U8G2_ST7920_128X64_F_SW_SPI display(U8G2_R0, /* clock=*/ DSP_DC_PIN, /* data=*/ DSP_DATA_PIN, /* cs=*/ DSP_CS_PIN, /* reset=*/ U8X8_PIN_NONE);
   #elif defined(USE_CREALITY_DISPLAY)
     // works only with software SPI, hence it's remarkably slower than hardware SPI
     U8G2_ST7920_128X64_F_SW_SPI display(U8G2_R0, /* clock=*/ DSP_DC_PIN, /* data=*/ DSP_DATA_PIN, /* cc=*/ DSP_CS_PIN, /* reset=*/ DSP_RESET_PIN);
+  #elif defined(USE_FYSETC_1_2_DISPLAY) || defined(USE_FYSETC_2_1_DISPLAY)
+    // Notice: This constructor is feasible for the FYSETC-MINI12864 V1.2 (RGB) and FYSETC-MINI12864 V2.1 (NeoPixel) RepRap display
+    U8G2_ST7567_JLX12864_F_2ND_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  #elif defined(USE_MKS_2_0_DISPLAY)
+    // Notice: This constructor is feasible for the MKS-MINI12864 V2.0 RepRap display
+    U8G2_ST7567_ENH_DG128064_F_2ND_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  #elif defined(USE_MKS_2_1_DISPLAY)
+    // Notice: This constructor is feasible for the MKS-MINI12864 V2.1 RepRap display
+    U8G2_ST7565_NHD_C12864_F_2ND_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
   #else
-  // Notice: This constructor is feasible for the MKS-MINI12864 V2.0 RepRap display
-  U8G2_ST7567_ENH_DG128064_F_2ND_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
-  //U8G2_UC1701_MINI12864_F_2ND_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+    #if !defined(USE_TWI_DISPLAY) && !defined(USE_LEONERD_DISPLAY) && !defined(USE_ANET_DISPLAY) && !defined(USE_CREALITY_DISPLAY) && !defined(USE_FYSETC_1_2_DISPLAY) && !defined(USE_FYSETC_2_1_DISPLAY) && !defined(USE_MKS_2_0_DISPLAY) && !defined(USE_MKS_2_1_DISPLAY)
+      #error "Please define at least one display in the platformio.ini define flag"
+    #endif
+    #if (defined(USE_TWI_DISPLAY) && defined(USE_LEONERD_DISPLAY)) || \
+        (defined(USE_TWI_DISPLAY) && defined(USE_ANET_DISPLAY)) || \
+        (defined(USE_TWI_DISPLAY) && defined(USE_FYSETC_1_2_DISPLAY)) || \
+        (defined(USE_TWI_DISPLAY) && defined(USE_FYSETC_2_1_DISPLAY)) || \
+        (defined(USE_TWI_DISPLAY) && defined(USE_MKS_2_0_DISPLAY)) || \
+        (defined(USE_TWI_DISPLAY) && defined(USE_MKS_2_1_DISPLAY)) || \
+        (defined(USE_LEONERD_DISPLAY) && defined(USE_ANET_DISPLAY)) || \
+        (defined(USE_LEONERD_DISPLAY) && defined(USE_FYSETC_1_2_DISPLAY)) || \
+        (defined(USE_LEONERD_DISPLAY) && defined(USE_FYSETC_2_1_DISPLAY)) || \
+        (defined(USE_LEONERD_DISPLAY) && defined(USE_MKS_2_0_DISPLAY)) || \
+        (defined(USE_LEONERD_DISPLAY) && defined(USE_MKS_2_1_DISPLAY)) || \
+        (defined(USE_ANET_DISPLAY) && defined(USE_LEONERD_DISPLAY)) || \
+        (defined(USE_ANET_DISPLAY) && defined(USE_FYSETC_1_2_DISPLAY)) || \
+        (defined(USE_ANET_DISPLAY) && defined(USE_FYSETC_2_1_DISPLAY)) || \
+        (defined(USE_ANET_DISPLAY) && defined(USE_MKS_2_0_DISPLAY)) || \
+        (defined(USE_ANET_DISPLAY) && defined(USE_MKS_2_1_DISPLAY)) || \
+        (defined(USE_CREALITY_DISPLAY) && defined(USE_LEONERD_DISPLAY) || \
+        (defined(USE_CREALITY_DISPLAY) && defined(USE_ANET_DISPLAY)) || \
+        (defined(USE_CREALITY_DISPLAY) && defined(USE_FYSETC_1_2_DISPLAY)) || \
+        (defined(USE_CREALITY_DISPLAY) && defined(USE_FYSETC_2_1_DISPLAY)) || \
+        (defined(USE_CREALITY_DISPLAY) && defined(USE_MKS_2_0_DISPLAY)) || \
+        (defined(USE_CREALITY_DISPLAY) && defined(USE_MKS_2_1_DISPLAY)) || \
+        (defined(USE_FYSETC_1_2_DISPLAY) && defined(USE_FYSETC_2_1_DISPLAY)) || \
+        (defined(USE_FYSETC_1_2_DISPLAY) && defined(USE_MKS_2_0_DISPLAY)) || \
+        (defined(USE_FYSETC_1_2_DISPLAY) && defined(USE_MKS_2_1_DISPLAY)) || \
+        (defined(USE_FYSETC_2_1_DISPLAY) && defined(USE_MKS_2_0_DISPLAY)) || \
+        (defined(USE_FYSETC_2_1_DISPLAY) && defined(USE_MKS_2_1_DISPLAY)) || \
+        (defined(USE_MKS_2_0_DISPLAY) && defined(USE_MKS_2_1_DISPLAY))
+        #error "Please define only one display in the platformio.ini define flag"
+    #endif
   #endif
 
 #elif defined(__BRD_ESP32)
   #if defined(USE_TWI_DISPLAY)
-  U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+    U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
   #elif defined(USE_LEONERD_DISPLAY)
-  U8G2_SH1106_128X64_NONAME_F_HW_I2C display(U8G2_R2, /* reset=*/ U8X8_PIN_NONE);
-  #else
-  // Notice: This constructor is feasible for the MKS-MINI12864 V2.0 RepRap display
-  U8G2_ST7567_ENH_DG128064_F_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+    U8G2_SH1106_128X64_NONAME_F_HW_I2C display(U8G2_R2, /* reset=*/ U8X8_PIN_NONE);
+  #elif defined(USE_MKS_2_0_DISPLAY)
+    // Notice: This constructor is feasible for the MKS-MINI12864 V2.0 RepRap display
+    U8G2_ST7567_ENH_DG128064_F_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
   #endif
 
 #elif defined(__BRD_FYSETC_AIOII)
-U8G2_UC1701_MINI12864_F_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  U8G2_UC1701_MINI12864_F_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
 #endif
 
 #if defined(__AVR__)
-Stream*                 debugSerial = &Serial;
+  Stream*                 debugSerial = &Serial;
 
 #elif defined(__STM32F1__)
   #if defined(__BRD_SKR_MINI_E3) || defined(__BRD_SKR_MINI_E3DIP)
-Stream*                 debugSerial = &Serial2;
+    Stream*             debugSerial = &Serial2;
   #else
-Stream*                 debugSerial = &Serial1;
+    Stream*             debugSerial = &Serial1;
   #endif
 
 #elif defined(__ESP32__)
 BluetoothSerial SerialBT;                 // used for debugging or mirroring traffic to PanelDue
 #if defined(__DEBUG_BT__)
-Stream*                 debugSerial = &SerialBT;  // decide which serial port to use for debug outputs
+  Stream*               debugSerial = &SerialBT;  // decide which serial port to use for debug outputs
 #else
-Stream*                 debugSerial = &Serial;    // decide which serial port to use for debug outputs
+  Stream*               debugSerial = &Serial;    // decide which serial port to use for debug outputs
 #endif
 HardwareSerial          Serial3(1);               // dummy declaration to keep the compiler happy,
                                                   // won't be used though because of the CAN_USE_SERIAL3 definition
@@ -94,30 +131,30 @@ ZServo                  servoLid;
 ZFan                    fan;
 DuetLaserSensor         duetLS;
 #if defined(USE_LEONERD_DISPLAY)
-LeoNerdEncoder          encoder(I2C_ENCODER_ADDRESS, -1);
+  LeoNerdEncoder        encoder(I2C_ENCODER_ADDRESS, -1);
 #else
-ClickEncoder            encoder(ENCODER1_PIN, ENCODER2_PIN, ENCODER_BUTTON_PIN, 4);
+  ClickEncoder          encoder(ENCODER1_PIN, ENCODER2_PIN, ENCODER_BUTTON_PIN, 4);
 #endif
 #if defined(USE_SW_SERIAL)
-SoftwareSerial          swSer0(SW_SERIAL_RX_PIN, SW_SERIAL_TX_PIN, false);
+  SoftwareSerial        swSer0(SW_SERIAL_RX_PIN, SW_SERIAL_TX_PIN, false);
 #endif
 #if defined(__STM32F1__)
-#if defined(USE_COMPOSITE_SERIAL)
-USBMassStorage          MassStorage;
-USBCompositeSerial      CompositeSerial;
-#endif
+  #if defined(USE_COMPOSITE_SERIAL)
+    USBMassStorage      MassStorage;
+    USBCompositeSerial  CompositeSerial;
+  #endif
 #elif defined(__ESP32__)
-ZPortExpander           portEx;
+  ZPortExpander         portEx;
 #endif
 
 TMC2209Stepper* drivers[NUM_STEPPERS] { nullptr, nullptr, nullptr };
 
 #if defined(MULTISERVO)
-Adafruit_PWMServoDriver servoPwm = Adafruit_PWMServoDriver(I2C_SERVOCTL_ADDRESS, Wire);
-int8_t servoMapping[17]          = {   0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, -1 }; // last one is used for the Wiper mapping
-uint8_t servoPosClosed[16]       = {  90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90 };
+  Adafruit_PWMServoDriver servoPwm = Adafruit_PWMServoDriver(I2C_SERVOCTL_ADDRESS, Wire);
+  int8_t servoMapping[17]          = {   0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, -1 }; // last one is used for the Wiper mapping
+  uint8_t servoPosClosed[16]       = {  90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90 };
 #else
-uint8_t servoPosClosed[MAX_TOOLS];
+  uint8_t servoPosClosed[MAX_TOOLS];
 #endif
 
 String                          wirelessHostname = "";
@@ -135,8 +172,8 @@ static volatile unsigned        generalCounter = 0;
 static volatile unsigned        tickCounter = 0;
 volatile uint16_t               bracketCnt = 0;
 volatile uint16_t               jsonPtr = 0;
-volatile bool                   initDone = false;             // enables sending periodical status information to serial ports
-volatile bool                   processingSerial0;            // set when GCode is incoming on a serial port
+volatile bool                   initDone = false;         // enables sending periodical status information to serial ports
+volatile bool                   processingSerial0;        // set when GCode is incoming on a serial port
 volatile bool                   processingSerial1;
 volatile bool                   processingSerial2;
 volatile bool                   processingSerial3;
@@ -148,61 +185,61 @@ uint16_t                        mmsMax = 800;             // maximum moving spee
 uint16_t                        speedIncrement = 5;       // increment for speeds in menus
 
 
-static volatile uint16_t        intervalMask;  // bit-mask for interval reached
+static volatile uint16_t        intervalMask;             // bit-mask for interval reached
 IntervalHandler intervalHandlers[] = {
   {   10,   10, every10ms },  {   20,   20, every20ms },  {   50,   50, every50ms },
   {  100,  100, every100ms }, {  250,  250, every250ms }, {  500,  500, every500ms },
   { 1000, 1000, every1s },    { 2000, 2000, every2s },    { 5000, 5000, every5s } };
 
-#ifdef __STM32F1__
-volatile uint32_t *stepper_reg_X = &((PIN_MAP[X_STEP_PIN].gpio_device)->regs->BSRR);
-volatile uint32_t *stepper_reg_Y = &((PIN_MAP[Y_STEP_PIN].gpio_device)->regs->BSRR);
-volatile uint32_t *stepper_reg_Z = &((PIN_MAP[Z_STEP_PIN].gpio_device)->regs->BSRR);
-uint32_t pinMask_X = BIT(PIN_MAP[X_STEP_PIN].gpio_bit);
-uint32_t pinMask_Y = BIT(PIN_MAP[Y_STEP_PIN].gpio_bit);
-uint32_t pinMask_Z = BIT(PIN_MAP[Z_STEP_PIN].gpio_bit);
+#if defined(__STM32F1__)
+  volatile uint32_t *stepper_reg_X = &((PIN_MAP[X_STEP_PIN].gpio_device)->regs->BSRR);
+  volatile uint32_t *stepper_reg_Y = &((PIN_MAP[Y_STEP_PIN].gpio_device)->regs->BSRR);
+  volatile uint32_t *stepper_reg_Z = &((PIN_MAP[Z_STEP_PIN].gpio_device)->regs->BSRR);
+  uint32_t pinMask_X = BIT(PIN_MAP[X_STEP_PIN].gpio_bit);
+  uint32_t pinMask_Y = BIT(PIN_MAP[Y_STEP_PIN].gpio_bit);
+  uint32_t pinMask_Z = BIT(PIN_MAP[Z_STEP_PIN].gpio_bit);
 #endif
 
 void overrideStepX() {
-#ifdef __STM32F1__
-  *stepper_reg_X = pinMask_X;
-  if(smuffConfig.stepDelay[SELECTOR] > 0)
-    delayMicroseconds(smuffConfig.stepDelay[SELECTOR]);
-  *stepper_reg_X = pinMask_X << 16;
-#else
-  STEP_HIGH_X
-  if(smuffConfig.stepDelay[SELECTOR] > 0)
-    delayMicroseconds(smuffConfig.stepDelay[SELECTOR]);
-  STEP_LOW_X
-#endif
+  #if defined(__STM32F1__)
+    *stepper_reg_X = pinMask_X;
+    if(smuffConfig.stepDelay[SELECTOR] > 0)
+      delayMicroseconds(smuffConfig.stepDelay[SELECTOR]);
+    *stepper_reg_X = pinMask_X << 16;
+  #else
+    STEP_HIGH_X
+    if(smuffConfig.stepDelay[SELECTOR] > 0)
+      delayMicroseconds(smuffConfig.stepDelay[SELECTOR]);
+    STEP_LOW_X
+  #endif
 }
 
 void overrideStepY() {
-#ifdef __STM32F1__
-  *stepper_reg_Y = pinMask_Y;
-  if(smuffConfig.stepDelay[REVOLVER] > 0)
-    delayMicroseconds(smuffConfig.stepDelay[REVOLVER]);
-  *stepper_reg_Y = pinMask_Y << 16;
-#else
-  STEP_HIGH_Y
-  if(smuffConfig.stepDelay[REVOLVER] > 0)
-    delayMicroseconds(smuffConfig.stepDelay[REVOLVER]);
-  STEP_LOW_Y
-#endif
+  #if defined(__STM32F1__)
+    *stepper_reg_Y = pinMask_Y;
+    if(smuffConfig.stepDelay[REVOLVER] > 0)
+      delayMicroseconds(smuffConfig.stepDelay[REVOLVER]);
+    *stepper_reg_Y = pinMask_Y << 16;
+  #else
+    STEP_HIGH_Y
+    if(smuffConfig.stepDelay[REVOLVER] > 0)
+      delayMicroseconds(smuffConfig.stepDelay[REVOLVER]);
+    STEP_LOW_Y
+  #endif
 }
 
 void overrideStepZ() {
-#ifdef __STM32F1__
-  *stepper_reg_Z = pinMask_Z;
-  if(smuffConfig.stepDelay[FEEDER] > 0)
-    delayMicroseconds(smuffConfig.stepDelay[FEEDER]);
-  *stepper_reg_Z = pinMask_Z << 16;
-#else
-  STEP_HIGH_Z
-  if(smuffConfig.stepDelay[FEEDER] > 0)
-    delayMicroseconds(smuffConfig.stepDelay[FEEDER]);
-  STEP_LOW_Z
-#endif
+  #if defined(__STM32F1__)
+    *stepper_reg_Z = pinMask_Z;
+    if(smuffConfig.stepDelay[FEEDER] > 0)
+      delayMicroseconds(smuffConfig.stepDelay[FEEDER]);
+    *stepper_reg_Z = pinMask_Z << 16;
+  #else
+    STEP_HIGH_Z
+    if(smuffConfig.stepDelay[FEEDER] > 0)
+      delayMicroseconds(smuffConfig.stepDelay[FEEDER]);
+    STEP_LOW_Z
+  #endif
 }
 
 void endstopEventY() {
@@ -269,8 +306,8 @@ void isrGPTimerHandler() {
       }
     }
     #if !defined(USE_LEONERD_DISPLAY)
-    if(initDone)
-      encoder.service();                // service the rotary encoder
+      if(initDone)
+        encoder.service();            // service the rotary encoder
     #endif
     if(smuffConfig.useDuetLaser) {
       duetLS.service();               // service the Duet3D laser Sensor reader
@@ -282,8 +319,8 @@ void isrGPTimerHandler() {
   if(tickCounter == 1000)             // reset counter to avoid overrun
     tickCounter = 0;
   #if !defined(MULTISERVO)
-  // call the servos interrupt routines also every 50uS
-  isrServoTimerHandler();
+    // call the servos interrupt routines also every 50uS
+    isrServoTimerHandler();
   #endif
   interrupts();
 }
@@ -309,7 +346,7 @@ void enumI2cDevices() {
   }
   if(!encoder) {
     #if defined(USE_LEONERD_DISPLAY)
-    __debug(PSTR("LeoNerd's OLED configured but no encoder was found!"));
+      __debug(PSTR("LeoNerd's OLED configured but no encoder was found!"));
     #endif
   }
 }
@@ -322,20 +359,20 @@ void setup() {
   serialBuffer3.reserve(40);
 
   #if defined(__BRD_FYSETC_AIOII) || defined(__BRD_SKR_MINI_E3DIP) || defined(__BRD_SKR_MINI)
-  // Disable JTAG for these boards!
-  // On the FYSETC AIOII it's because of the display DSP_DC_PIN/DOG_A0 signal (PA15 / JTDI).
-  // On the SKR MINI E3-DIP it's because of the buzzer signal (PA15 / JTDI).
-  disableDebugPorts();
-  #if defined(__BRD_FYSETC_AIOII) && !defined(USE_TWI_DISPLAY) && defined(STM32_REMAP_SPI)
-    afio_remap(AFIO_REMAP_SPI1);  // remap SPI3 to SPI1 if a "normal" display is being used
-  #endif
+    // Disable JTAG for these boards!
+    // On the FYSETC AIOII it's because of the display DSP_DC_PIN/DOG_A0 signal (PA15 / JTDI).
+    // On the SKR MINI E3-DIP it's because of the buzzer signal (PA15 / JTDI).
+    disableDebugPorts();
+    #if defined(__BRD_FYSETC_AIOII) && !defined(USE_TWI_DISPLAY) && defined(STM32_REMAP_SPI)
+      afio_remap(AFIO_REMAP_SPI1);  // remap SPI3 to SPI1 if a "normal" display is being used
+    #endif
   #endif
 
   // Setup a fixed baudrate until the config file was read.
   // This baudrate is the default setting on the ESP32 while
   // booting up, so exceptions thrown can be shown in terminal app
   #if !defined(USE_COMPOSITE_SERIAL)
-  Serial.begin(115200);
+    Serial.begin(115200);
   #endif
   if(CAN_USE_SERIAL1) Serial1.begin(115200);
   if(CAN_USE_SERIAL2) Serial2.begin(115200);
@@ -343,7 +380,7 @@ void setup() {
 
   initUSB();                          // init the USB serial so it's being recognized by the Windows-PC
   #if defined(USE_COMPOSITE_SERIAL)
-  CompositeSerial.begin(115200);
+    CompositeSerial.begin(115200);
   #endif
   initFastLED();                      // init FastLED if configured
   testFastLED();                      // run a test sequence on FastLEDs
@@ -476,11 +513,11 @@ void runAndWait(int8_t index) {
   while(remainingSteppersFlag) {
     checkSerialPending(); // not a really nice solution but needed to check serials for "Abort" command in PMMU mode
 
-#if defined(__STM32F1__) // || defined(__ESP32__)
+  #if defined(__STM32F1__) // || defined(__ESP32__)
     if((remainingSteppersFlag & _BV(FEEDER)) && !showMenu) {
       //refreshStatus(false, true);
     }
-#endif
+  #endif
   }
   //__debug(PSTR("RunAndWait done"));
   //if(index==FEEDER) __debug(PSTR("Fed: %smm"), String(steppers[index].getStepsTakenMM()).c_str());
@@ -554,36 +591,36 @@ void monitorTMC(uint8_t axis) {
 */
 void loopEx() {
 
-#if defined(__BRD_SKR_MINI_E3) || defined(__BRD_SKR_MINI_E3DIP)
-  /*
-  if(interval1s) {
-    #if defined(USE_SW_SERIAL)
-    // for testing SoftwareSerial
-    swSer0.write('*');
-    swSer0.write('T');
-    swSer0.write('G');
-    #endif
-    interval1s = false;
-  }
-  */
-#endif
+  #if defined(__BRD_SKR_MINI_E3) || defined(__BRD_SKR_MINI_E3DIP)
+    /*
+    if(interval1s) {
+      #if defined(USE_SW_SERIAL)
+        // for testing SoftwareSerial
+        swSer0.write('*');
+        swSer0.write('T');
+        swSer0.write('G');
+      #endif
+      interval1s = false;
+    }
+    */
+  #endif
 
-#if defined(__ESP32__)
-  // call this method only if you have serial ports assigned
-  // to the Port Expander
-  //portEx.service();
+  #if defined(__ESP32__)
+    // call this method only if you have serial ports assigned
+    // to the Port Expander
+    //portEx.service();
 
-  /* FOR TESTING ONLY */
-  // if(interval500ms) { portEx.togglePin(1); interval500ms = false; }
-  /*
-  if(interval5s) { portEx.testSerial("Testing PortExpander serial...\n"); interval5s = false; }
-  while(portEx.serialAvailable(0)) {
-    char c = portEx.serialRead(0);
-    char cc = (c >= 0x20 && c < 0x7F) ? c : '.';
-    __debug(PSTR("Got: %3d - '%c' - 0x%02x"), c, cc, c);
-  }
-  */
-#endif
+    /* FOR TESTING ONLY */
+    // if(interval500ms) { portEx.togglePin(1); interval500ms = false; }
+    /*
+    if(interval5s) { portEx.testSerial("Testing PortExpander serial...\n"); interval5s = false; }
+    while(portEx.serialAvailable(0)) {
+      char c = portEx.serialRead(0);
+      char cc = (c >= 0x20 && c < 0x7F) ? c : '.';
+      __debug(PSTR("Got: %3d - '%c' - 0x%02x"), c, cc, c);
+    }
+    */
+  #endif
 }
 
 void loop() {
@@ -600,33 +637,33 @@ void loop() {
   }
 
   #if defined(USE_COMPOSITE_SERIAL)
-  MassStorage.loop();
+    MassStorage.loop();
   #endif
 
   #if defined(SD_DETECT_PIN)
-  // message the user if the SD-Card gets removed
-  if(digitalRead(SD_DETECT_PIN) == HIGH) {
-    if(!sdRemoved) {
-      userBeep();
-      LeoNerdBlinkRed = true;
-    }
-    sdRemoved = true;
-    char tmp[128];
-    sprintf_P(tmp, P_SDCardRemoved);
-    drawUserMessage(tmp);
-    return;
-  }
-  else {
-    if(sdRemoved) {
-      if(initSD(false)) {
-        sdRemoved = false;
-        refreshStatus(true, false);
-        LeoNerdBlinkRed = false;
+    // message the user if the SD-Card gets removed
+    if(digitalRead(SD_DETECT_PIN) == HIGH) {
+      if(!sdRemoved) {
+        userBeep();
+        LeoNerdBlinkRed = true;
       }
+      sdRemoved = true;
+      char tmp[128];
+      sprintf_P(tmp, P_SDCardRemoved);
+      drawUserMessage(tmp);
+      return;
     }
+    else {
+      if(sdRemoved) {
+        if(initSD(false)) {
+          sdRemoved = false;
+          refreshStatus(true, false);
+          LeoNerdBlinkRed = false;
+        }
+      }
     else
       sdRemoved = false;
-  }
+    }
   #endif
 
   bool state = feederEndstop();
@@ -758,24 +795,24 @@ bool checkUserMessage() {
 
 
 void checkSerialPending() {
-#ifndef __AVR__
-  if(Serial.available()) {
-    serialEvent();
-  }
-  if(CAN_USE_SERIAL1) {
-    if(Serial1.available())
-      serialEvent1();
-  }
-  if(CAN_USE_SERIAL2) {
-    if(Serial2.available()) {
-      serialEvent2();
+  #if !defined(__AVR__)
+    if(Serial.available()) {
+      serialEvent();
     }
-  }
-  if(CAN_USE_SERIAL3) {
-    if(Serial3.available())
-      serialEvent3();
-  }
-#endif
+    if(CAN_USE_SERIAL1) {
+      if(Serial1.available())
+        serialEvent1();
+    }
+    if(CAN_USE_SERIAL2) {
+      if(Serial2.available()) {
+        serialEvent2();
+      }
+    }
+    if(CAN_USE_SERIAL3) {
+      if(Serial3.available())
+        serialEvent3();
+    }
+  #endif
 }
 
 void resetSerialBuffer(int8_t serial) {
@@ -934,51 +971,51 @@ void serialEvent2() {
   processingSerial2 = false;
 }
 
-#ifndef __AVR__
-void serialEvent1() {
+#if !defined(__AVR__)
+  void serialEvent1() {
 
-  uint16_t avail = 0;
-  while((avail = Serial1.available())) {
-    processingSerial1 = true;
-    char in = (char)Serial1.read();
-    // check for JSON data first
-    if(isJsonData(in))
-      continue;
-    if (in == '\n') {
-      //__debug(PSTR("Received-1: %s"), serialBuffer1.c_str());
-      parseGcode(serialBuffer1, 1);
-      isQuote = false;
-      actionOk = false;
-    }
-    else {
-      filterSerialInput(serialBuffer1, in);
-    }
-  }
-  processingSerial1 = false;
-
-}
-
-void serialEvent3() {
-
-  uint16_t avail = 0;
-  while((avail = Serial3.available())) {
-    processingSerial3 = true;
-    char in = (char)Serial3.read();
-    if(smuffConfig.hasPanelDue == 2) {
-      if(CAN_USE_SERIAL2) Serial2.write(in);
-    }
-    else {
+    uint16_t avail = 0;
+    while((avail = Serial1.available())) {
+      processingSerial1 = true;
+      char in = (char)Serial1.read();
+      // check for JSON data first
+      if(isJsonData(in))
+        continue;
       if (in == '\n') {
-        //__debug(PSTR("Received-3: %s"), serialBuffe3.c_str());
-        parseGcode(serialBuffer3, 3);
+        //__debug(PSTR("Received-1: %s"), serialBuffer1.c_str());
+        parseGcode(serialBuffer1, 1);
         isQuote = false;
         actionOk = false;
       }
       else {
-        filterSerialInput(serialBuffer3, in);
+        filterSerialInput(serialBuffer1, in);
       }
     }
+    processingSerial1 = false;
+
   }
-  processingSerial3 = false;
-}
+
+  void serialEvent3() {
+
+    uint16_t avail = 0;
+    while((avail = Serial3.available())) {
+      processingSerial3 = true;
+      char in = (char)Serial3.read();
+      if(smuffConfig.hasPanelDue == 2) {
+        if(CAN_USE_SERIAL2) Serial2.write(in);
+      }
+      else {
+        if (in == '\n') {
+          //__debug(PSTR("Received-3: %s"), serialBuffe3.c_str());
+          parseGcode(serialBuffer3, 3);
+          isQuote = false;
+          actionOk = false;
+        }
+        else {
+          filterSerialInput(serialBuffer3, in);
+        }
+      }
+    }
+    processingSerial3 = false;
+  }
 #endif

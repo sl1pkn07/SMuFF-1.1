@@ -45,11 +45,11 @@
 #define Z_ENABLE_PIN        PC2
 #define Z_END_PIN           PB14
 #define Z_END2_PIN          -1
-#define Z_END_DUET_PIN      -1       // for testing only
+#define Z_END_DUET_PIN      Z_END2_PIN
 
 #define BEEPER_PIN          PC9
 
-#define SERVO1_PIN          -1
+#define SERVO1_PIN          PD2      // AC-DET
 #define SERVO2_PIN          PB15     // FIL-DET
 #define FAN_PIN             PC8      // FAN1
 #define HEATER0_PIN         PC7      // BED
@@ -57,20 +57,31 @@
 
 #define NEOPIXEL_PIN        -1
 #define DEBUG_PIN           -1
-#define RELAY_PIN          -1      // Relais for stepper motor switching
+#define RELAY_PIN           -1      // Relais for stepper motor switching
 
 #define SDCS_PIN            PA4
 
-#define USB_CONNECT_PIN     -1
-#define SD_DETECT_PIN       -1
+#define USB_CONNECT_PIN     -1      // not avail
+#define SD_DETECT_PIN       PC3
 
 #define DSP_CS_PIN          PB5     // DOGLCD-CS
 #define DSP_DC_PIN          PA15    // DOGLCD-A0
 #define DSP_RESET_PIN       PB4     // DOGLCD-RST
 
+#undef DSP_CONTRAST
+#define DSP_CONTRAST        230     // Fixed contrast because not works as spected
+
+#define RGB_LED_R_PIN       PB0
+#define RGB_LED_G_PIN       PB6
+#define RGB_LED_B_PIN       PB7
+
 #define ENCODER1_PIN        PC10
 #define ENCODER2_PIN        PC11
 #define ENCODER_BUTTON_PIN  PC12
+
+#define STALL_X_PIN         -1      //
+#define STALL_Y_PIN         -1      //
+#define STALL_Z_PIN         -1      //
 
 #define DEBUG_OFF_PIN       -1
 
@@ -79,15 +90,19 @@
 #define STALL_Z_PIN         -1
 
 #define CAN_USE_SERIAL1     true
-#define CAN_USE_SERIAL2     false
-#define CAN_USE_SERIAL3     true
 
-#define TX3_PIN             PB10     // P4-7
-#define RX3_PIN             PB11     // P4-5
+// SERIAL1
+#define TX1_PIN             PB10     // P4-7
+#define RX1_PIN             PB11     // P4-5
+
+// SERIAL2
+#define CAN_USE_SERIAL2     false
 
 #define TX2_PIN             PA2      // P4-8
 #define RX2_PIN             PA3      // P4-6
 
-#define RGB_LED_R_PIN       PB0
-#define RGB_LED_G_PIN       PB6
-#define RGB_LED_B_PIN       PB7
+// SERIAL3
+#define CAN_USE_SERIAL3     false
+
+#define TX3_PIN             -1
+#define RX3_PIN             -1

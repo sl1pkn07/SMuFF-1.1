@@ -27,9 +27,9 @@
 #define US_PER_PULSE_0DEG       1000      // microseconds for 0 degrees
 #define US_PER_PULSE_180DEG     2000      // microseconds for 180 degrees
 #define DUTY_CYCLE              20000     // servo cycle in us (>= 20ms)
-#ifdef __ESP32__
-#define SERVO_CHANNEL           8
-#define SERVO_FREQ              50
+#if defined(__ESP32__)
+  #define SERVO_CHANNEL         8
+  #define SERVO_FREQ            50
 #endif
 
 extern void __debug(const char* fmt, ...);
@@ -68,25 +68,25 @@ public:
 
 private:
   void    setServoPin(int8_t state);
-  int8_t            _pin;
-  int8_t            _pinState;
-  bool              _useTimer = false;
-  bool              _timerStopped = false;
-  int8_t            _servoIndex;
-  uint8_t           _degree;
-  uint8_t           _lastDegree;
-#ifdef __STM32F1__
-  uint32_t          _lastUpdate;
-  volatile uint32_t _tickCnt;
-#else
-  unsigned uint32_t _lastUpdate;
-  volatile uint32_t _tickCnt;
-#endif
-  volatile uint8_t  _dutyCnt;
-  uint8_t           _maxCycles;
-  uint16_t          _pulseLen;
-  uint16_t          _minPw = US_PER_PULSE_0DEG;
-  uint16_t          _maxPw = US_PER_PULSE_180DEG;
-  uint8_t           _minDegree = 0;
-  uint8_t           _maxDegree = 180;
+  int8_t              _pin;
+  int8_t              _pinState;
+  bool                _useTimer = false;
+  bool                _timerStopped = false;
+  int8_t              _servoIndex;
+  uint8_t             _degree;
+  uint8_t             _lastDegree;
+  #if defined(__STM32F1__)
+    uint32_t          _lastUpdate;
+    volatile uint32_t _tickCnt;
+  #else
+    unsigned uint32_t _lastUpdate;
+    volatile uint32_t _tickCnt;
+  #endif
+  volatile uint8_t    _dutyCnt;
+  uint8_t             _maxCycles;
+  uint16_t            _pulseLen;
+  uint16_t            _minPw = US_PER_PULSE_0DEG;
+  uint16_t            _maxPw = US_PER_PULSE_180DEG;
+  uint8_t             _minDegree = 0;
+  uint8_t             _maxDegree = 180;
 };

@@ -1,6 +1,6 @@
 ; --------------------------------------------
 ; SMuFF test script for Servo positioning
-; Make sure the Servo is able to reach all 
+; Make sure the Servo is able to reach all
 ; positions between 0° and 180°
 ; --------------------------------------------
 M280 P1 S90
@@ -9,7 +9,6 @@ M280 P1 S0
 G4 S1
 M280 P1 S180
 G4 S1
-
 M280 P1 S10
 G4 S1
 M280 P1 S20

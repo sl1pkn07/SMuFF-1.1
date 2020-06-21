@@ -37,14 +37,14 @@
 
 /* Retro-compatibility with arduino 0023 and previous version */
 #if ARDUINO >= 100
-#include "Arduino.h"
-#define I2CWRITE(x) Wire.write(x)
-#define I2CREAD() Wire.read()
+  #include "Arduino.h"
+  #define I2CWRITE(x) Wire.write(x)
+  #define I2CREAD() Wire.read()
 #else
-#include "WProgram.h"
-#define I2CWRITE(x) Wire.send(x)
-#define I2CREAD() Wire.receive()
-#define INPUT_PULLUP 2
+  #include "WProgram.h"
+  #define I2CWRITE(x) Wire.send(x)
+  #define I2CREAD() Wire.receive()
+  #define INPUT_PULLUP 2
 #endif
 
 /* defines for chip selecting */
@@ -150,7 +150,7 @@ public:
 	 */
 	void blink(uint8_t pin, uint16_t count, uint32_t duration);
 
-#ifdef PCF857X_INTERRUPT_SUPPORT
+#if defined(PCF857X_INTERRUPT_SUPPORT)
 	/**
 	 * Enable interrupts support and setup interrupts handler
 	 *
@@ -194,37 +194,37 @@ public:
 #endif
 
 protected:
-	/** Output pins values */
-	volatile uint16_t _PORT;
+  /** Output pins values */
+  volatile uint16_t _PORT;
 
-	/** Current input pins values */
-	volatile uint16_t _PIN;
+  /** Current input pins values */
+  volatile uint16_t _PIN;
 
-	/** Pins modes values (OUTPUT or INPUT) */
-	volatile uint16_t _DDR;
+  /** Pins modes values (OUTPUT or INPUT) */
+  volatile uint16_t _DDR;
 
-	/** PCF857X I2C address */
-	uint8_t _address;
+  /** PCF857X I2C address */
+  uint8_t _address;
 
-	/** Chip type (PCF8574 or PCF8575) */
-	uint8_t _chip;
+  /** Chip type (PCF8574 or PCF8575) */
+  uint8_t _chip;
 
-#ifdef PCF857X_INTERRUPT_SUPPORT
+  #if defined(PCF857X_INTERRUPT_SUPPORT)
 	/** Old value of _PIN variable */
 	volatile uint16_t _oldPIN;
 
 	/** ISR ignore flag */
-	volatile uint8_t _isrIgnore;
+     volatile uint8_t _isrIgnore;
 
-	/** PCINT pin used for "INT" pin handling */
-	uint8_t _pcintPin;
+    /** PCINT pin used for "INT" pin handling */
+    uint8_t _pcintPin;
 
 	/** Interrupts modes of pins ( LOW, CHANGE, FALLING, RISING)  */
 	uint8_t _intMode[16];
 
-	/** Interrupts callback functions */
-	void (*_intCallback[16])(void);
-#endif
+    /** Interrupts callback functions */
+    void (*_intCallback[16])(void);
+  #endif
 
 	/**
 	 * Read GPIO states and store them in _PIN variable
