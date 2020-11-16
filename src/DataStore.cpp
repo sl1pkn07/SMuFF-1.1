@@ -25,7 +25,7 @@
 #include "ArduinoJson.h"
 
 DataStore dataStore;
-extern SdFs SD;
+extern SdFat SD;
 extern int  swapTools[];
 
 void saveStore() {
@@ -44,18 +44,18 @@ void saveStore() {
       swaps[tmp] = swapTools[i];
     }
 
-    //__debug(PSTR("Updating dataStore"));
+    //__debugS(PSTR("Updating dataStore"));
 #if defined(__ESP32__)
   if (SD.begin(SDCS_PIN, SD_SCK_MHZ(4))) {
 #else
   if (SD.begin()) {
 #endif
-    FsFile cfg;
+    SdFile cfg;
     if(cfg.open(DATASTORE_FILE, (uint8_t)(O_WRITE | O_CREAT | O_TRUNC))) {
         serializeJsonPretty(jsonDoc, cfg);
     }
     cfg.close();  
-    //__debug(PSTR("DataStore updated"));
+    //__debugS(PSTR("DataStore updated"));
   }
 }
 
@@ -66,17 +66,17 @@ void recoverStore() {
 #else
   if (SD.begin()) {
 #endif
-    FsFile cfg;
+    SdFile cfg;
     if (!cfg.open(DATASTORE_FILE)){
-      __debug(PSTR("Data store file '%s' not found!\n"), DATASTORE_FILE);
+      __debugS(PSTR("Data store file '%s' not found!\n"), DATASTORE_FILE);
     } 
     else {
       auto error = deserializeJson(jsonDoc, cfg);
       if (error) {
-        __debug(PSTR("Data store file possibly corrupted or too large!\n"));
+        __debugS(PSTR("Data store file possibly corrupted or too large!\n"));
       } 
       else {
-        //__debug(PSTR("Data store recovered\n"));
+        //__debugS(PSTR("Data store recovered\n"));
         dataStore.stepperPos[SELECTOR]  = jsonDoc["Positions"]["Selector"];
         dataStore.stepperPos[REVOLVER]  = jsonDoc["Positions"]["Revolver"];
         dataStore.stepperPos[FEEDER]    = jsonDoc["Positions"]["Feeder"];

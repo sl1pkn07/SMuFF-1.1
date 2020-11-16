@@ -52,6 +52,7 @@ extern ZStepper       steppers[];
 extern ZServo         servo;
 extern ZServo         servoRevolver;
 extern char           tmp[];
+extern SdFat          SD;
 
 SMuFFConfig           smuffConfig;
 int                   lastEncoderTurn = 0;
@@ -76,7 +77,7 @@ void setupDisplay() {
 }
 
 void drawLogo() {
-  //__debug(PSTR("drawLogo start..."));
+  //__debugS(PSTR("drawLogo start..."));
   display.setBitmapMode(1);
   display.drawXBMP(0, 0, logo_width, logo_height, logo_bits);
   display.setFont(LOGO_FONT);
@@ -85,12 +86,12 @@ void drawLogo() {
   display.setDrawColor(1);
   display.setCursor(display.getDisplayWidth() - display.getStrWidth(brand) - 1, display.getDisplayHeight() - display.getMaxCharHeight());
   display.print(brand);
-  //__debug(PSTR("drawLogo end..."));
+  //__debugS(PSTR("drawLogo end..."));
 }
 
 void drawStatus() {
   char _wait[128];
-  //__debug(PSTR("drawStatus start..."));
+  //__debugS(PSTR("drawStatus start..."));
   display.setFont(STATUS_FONT);
   display.setFontMode(0);
   display.setDrawColor(1);
@@ -120,7 +121,7 @@ void drawStatus() {
   else {
     drawFeed();
   }
-  //__debug(PSTR("drawStatus end..."));
+  //__debugS(PSTR("drawStatus end..."));
 }
 
 void drawFeed() {
@@ -195,7 +196,7 @@ int splitStringLines(char* lines[], int maxLines, const char* message) {
   while(tok != NULL) {
     lines[++cnt] = tok;
     lastTok = tok;
-    //__debug(PSTR("Line: %s"), lines[cnt]);
+    //__debugS(PSTR("Line: %s"), lines[cnt]);
     if(cnt >= maxLines-1)
       break;
     tok = strtok(NULL, "\n");
@@ -344,7 +345,7 @@ uint8_t __wrap_u8x8_byte_arduino_2nd_hw_spi(U8X8_UNUSED u8x8_t *u8x8, U8X8_UNUSE
   uint8_t *data;
   uint8_t internal_spi_mode;
  
-  //__debug("x");
+  //__debugS("x");
   switch(msg)
   {
     case U8X8_MSG_BYTE_SEND:
@@ -576,7 +577,7 @@ bool moveHome(int index, bool showMessage, bool checkFeeder) {
    steppers[index].home();
   }
   
-  //__debug(PSTR("DONE Stepper home"));
+  //__debugS(PSTR("DONE Stepper home"));
   if (index == SELECTOR) {
     toolSelected = -1;
   }
@@ -586,7 +587,7 @@ bool moveHome(int index, bool showMessage, bool checkFeeder) {
   }
   dataStore.stepperPos[index] = pos;
   saveStore();
-  //__debug(PSTR("DONE save store"));
+  //__debugS(PSTR("DONE save store"));
   parserBusy = false;
   return true;
 }
@@ -721,7 +722,7 @@ void positionRevolver() {
   }
   steppers[FEEDER].setEnabled(true);
   delay(150);
-  //__debug(PSTR("PositionRevolver: pos: %d"), steppers[REVOLVER].getStepPosition());
+  //__debugS(PSTR("PositionRevolver: pos: %d"), steppers[REVOLVER].getStepPosition());
 }
 
 void repositionSelector(bool retractFilament) {
@@ -823,13 +824,13 @@ bool feedToEndstop(bool showMessage) {
       steppers[FEEDER].setMaxSpeed(curSpeed);
       feederJammed = true;
       parserBusy = false;
-      //__debug(PSTR("Load status: Abort: %d IgnoreAbort: %d Jammed:%d"), steppers[FEEDER].getAbort(), steppers[FEEDER].getIgnoreAbort(), feederJammed);
+      //__debugS(PSTR("Load status: Abort: %d IgnoreAbort: %d Jammed:%d"), steppers[FEEDER].getAbort(), steppers[FEEDER].getIgnoreAbort(), feederJammed);
       steppers[FEEDER].setIgnoreAbort(false);
       steppers[FEEDER].setAllowAccel(true);
       return false;
     }
     n += smuffConfig.insertLength;
-    //__debug(PSTR("L: %s N: %s Retry: %d"), String(l).c_str(), String(n).c_str(), retry);
+    //__debugS(PSTR("L: %s N: %s Retry: %d"), String(l).c_str(), String(n).c_str(), retry);
   }
   steppers[FEEDER].setIgnoreAbort(false);
   steppers[FEEDER].setAllowAccel(true);
@@ -1038,7 +1039,7 @@ bool unloadFilament() {
       prepSteppingRelMillimeter(FEEDER, -(smuffConfig.selectorDistance-ofs), true);
       runAndWait(FEEDER);
 
-      //__debug(PSTR("Unload: endstop=%d n=%d, n1=%d, n2=%d"), feederEndstop(), n, n1, n2);
+      //__debugS(PSTR("Unload: endstop=%d n=%d, n1=%d, n2=%d"), feederEndstop(), n, n1, n2);
       // is the filament unloaded?
       if(!feederEndstop()) {
         // not yet
@@ -1161,7 +1162,7 @@ bool selectTool(int ndx, bool showMessage) {
           #if !defined(__ESP32__)
           Serial2.print(smuffConfig.unloadCommand);
           Serial2.print("\n");
-          //__debug(PSTR("Feeder jammed, sent unload command '%s'\n"), smuffConfig.unloadCommand);
+          //__debugS(PSTR("Feeder jammed, sent unload command '%s'\n"), smuffConfig.unloadCommand);
           #endif
         }
       }
@@ -1177,7 +1178,7 @@ bool selectTool(int ndx, bool showMessage) {
       setServoPos(1, smuffConfig.revolverOffPos);
     }
   }
-  //__debug(PSTR("Selecting tool: %d"), ndx);
+  //__debugS(PSTR("Selecting tool: %d"), ndx);
   parserBusy = true;
   drawSelectingMessage(ndx);
   unsigned speed = steppers[SELECTOR].getMaxSpeed();
@@ -1225,7 +1226,7 @@ void resetRevolver() {
       runAndWait(REVOLVER);
     }
     else {
-      //__debug(PSTR("Positioning servo to: %d (CLOSED)"), smuffConfig.revolverOnPos);
+      //__debugS(PSTR("Positioning servo to: %d (CLOSED)"), smuffConfig.revolverOnPos);
       setServoPos(1, smuffConfig.revolverOnPos);
     }
   }
@@ -1236,7 +1237,7 @@ void setStepperSteps(int index, long steps, bool ignoreEndstop) {
   // ... just in case... you never know...
   if(smuffConfig.revolverIsServo && index == SELECTOR) {
     if(servoRevolver.getDegree() != smuffConfig.revolverOffPos) {
-      //__debug(PSTR("Positioning servo to: %d (OPEN)"), smuffConfig.revolverOffPos);
+      //__debugS(PSTR("Positioning servo to: %d (OPEN)"), smuffConfig.revolverOffPos);
       setServoPos(1, smuffConfig.revolverOffPos);
     }
   }
@@ -1454,7 +1455,7 @@ void getStoredData() {
   steppers[REVOLVER].setStepPosition(dataStore.stepperPos[REVOLVER]);
   steppers[FEEDER].setStepPosition(dataStore.stepperPos[FEEDER]);
   toolSelected = dataStore.tool;
-  //__debug(PSTR("Recovered tool: %d"), toolSelected);
+  //__debugS(PSTR("Recovered tool: %d"), toolSelected);
 }
 
 void setSignalPort(int port, bool state) {
@@ -1464,7 +1465,7 @@ void setSignalPort(int port, bool state) {
     Serial1.write(tmp);
 #elif defined(__ESP32__)
     // nothing here yet, might need adding some port pins settings / resetting
-    //__debug(PSTR("setting signal port: %d, %s"), port, state ? "true" : "false");
+    //__debugS(PSTR("setting signal port: %d, %s"), port, state ? "true" : "false");
 #else
     Serial2.write(tmp);
 #endif
@@ -1473,22 +1474,22 @@ void setSignalPort(int port, bool state) {
 
 void signalSelectorReady() {
   setSignalPort(SELECTOR_SIGNAL, false);
-  //__debug(PSTR("Signalling Selector ready"));
+  //__debugS(PSTR("Signalling Selector ready"));
 }
 
 void signalSelectorBusy() {
   setSignalPort(SELECTOR_SIGNAL, true);
-  //__debug(PSTR("Signalling Selector busy"));
+  //__debugS(PSTR("Signalling Selector busy"));
 }
 
 void signalLoadFilament() {
   setSignalPort(FEEDER_SIGNAL, true);
-  //__debug(PSTR("Signalling load filament"));
+  //__debugS(PSTR("Signalling load filament"));
 }
 
 void signalUnloadFilament() {
   setSignalPort(FEEDER_SIGNAL, false);
-  //__debug(PSTR("Signalling unload filament"));
+  //__debugS(PSTR("Signalling unload filament"));
 }
 
 void listDir(File root, int numTabs, int serial) {
@@ -1519,10 +1520,10 @@ void listDir(File root, int numTabs, int serial) {
 
 bool getFiles(const char* rootFolder, const char* pattern, int maxFiles, bool cutExtension, char* files) {
   char fname[40];
-  char tmp[40];
-  int cnt = 0;
-  FsFile file;
-  FsFile root;
+  char tmp[25];
+  uint8_t cnt = 0;
+  SdFile file;
+  SdFile root;
   SdFat SD;
 
 #if defined(__ESP32__)
@@ -1534,9 +1535,10 @@ bool getFiles(const char* rootFolder, const char* pattern, int maxFiles, bool cu
     while (file.openNext(&root, O_READ)) {
       if (!file.isHidden()) {
         file.getName(fname, sizeof(fname));
-        //__debug(PSTR("File: %s"), fname);
+        //__debugS(PSTR("File: %s"), fname);
         String lfn = String(fname);
-        if(pattern != NULL && !lfn.endsWith(pattern)) {
+        if(pattern != nullptr && !lfn.endsWith(pattern)) {
+          file.close();
           continue;
         }
         if(pattern != NULL && cutExtension)
@@ -1560,7 +1562,7 @@ void testRun(String fname) {
   char msg[256];
   char delimiter[] = { "\n" };
   SdFat SD;
-  FsFile file;
+  SdFile file;
   String gCode;
   unsigned long loopCnt = 1L, cmdCnt = 1L;
   int tool = 0, lastTool = 0;
@@ -1640,7 +1642,7 @@ void testRun(String fname) {
             if(mode > 3)
               mode = 0;
           }
-          __debug(PSTR("GCode: %-25s\t[ Elapsed: %d:%02d:%02d  Loops: %-4ld  Cmds: %5ld  ToolChanges: %5ld  Feeder Errors: %3d  Feeds ok/miss: %d/%d ]"), gCode.c_str(), (int)(secs/3600), (int)(secs/60)%60, (int)(secs%60), loopCnt, cmdCnt, toolChanges, feederErrors, endstop2Hit, endstop2Miss);
+          __debugS(PSTR("GCode: %-25s\t[ Elapsed: %d:%02d:%02d  Loops: %-4ld  Cmds: %5ld  ToolChanges: %5ld  Feeder Errors: %3d  Feeds ok/miss: %d/%d ]"), gCode.c_str(), (int)(secs/3600), (int)(secs/60)%60, (int)(secs%60), loopCnt, cmdCnt, toolChanges, feederErrors, endstop2Hit, endstop2Miss);
         }
         else {
           // restart from begin and increment loop count
@@ -1709,7 +1711,7 @@ void maintainTool() {
 
 extern Stream* debugSerial;
 
-void __debug(const char* fmt, ...) {
+void __debugS(const char* fmt, ...) {
   if(debugSerial == NULL)
     return;
 #ifdef DEBUG
@@ -1728,4 +1730,3 @@ void __debug(const char* fmt, ...) {
   #endif
 #endif
 }
-

@@ -24,7 +24,7 @@
 #ifndef _ZTIMER_H
 #define _ZTIMER_H 1
 
-extern void __debug(const char* fmt, ...);
+extern void __debugS(const char* fmt, ...);
 
 class ZTimer {
 public:

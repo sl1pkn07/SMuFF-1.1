@@ -55,9 +55,9 @@ void ZServo::attach(int pin, bool useTimer, int servoIndex) {
     #if defined(__ESP32__)
     ledcSetup(SERVO_CHANNEL+_servoIndex, SERVO_FREQ, 16);
     ledcAttachPin(pin, SERVO_CHANNEL+_servoIndex);
-    //__debug(PSTR("Servo channel: %d"), SERVO_CHANNEL+_servoIndex);
+    //__debugS(PSTR("Servo channel: %d"), SERVO_CHANNEL+_servoIndex);
     #endif
-    //__debug(PSTR("Servo without timer initialized"));
+    //__debugS(PSTR("Servo without timer initialized"));
   }
 }
 

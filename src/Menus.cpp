@@ -44,7 +44,7 @@ char* extractTitle(const char* menu PROGMEM, int index) {
       while(*--tok2 == ' ')
         *tok2 = 0;
     }
-    //__debug(PSTR("Menu: %s tok:%s"), menu, tok);
+    //__debugS(PSTR("Menu: %s tok:%s"), menu, tok);
     return tok;
   }
   return NULL;
@@ -286,7 +286,7 @@ void showMainMenu() {
 
   do {
     setupMainMenu(_menu);
-    //__debug(PSTR("MainList: %s %d"), _menu, strlen(_menu));
+    //__debugS(PSTR("MainList: %s %d"), _menu, strlen(_menu));
     sprintf_P(_title, P_TitleMainMenu);
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
@@ -489,7 +489,7 @@ void showTestrunMenu(char* menuTitle) {
       splitStringLines(fnames, (int)(sizeof(fnames)/sizeof(fnames[0])), (const char*)_menu);
       _file = String(fnames[current_selection-1]);
       _file.trim();
-      //__debug(PSTR("Selected file: %s"), _file.c_str());
+      //__debugS(PSTR("Selected file: %s"), _file.c_str());
       testRun(_file);
     }
   } while(!stopMenu);
@@ -519,7 +519,7 @@ bool selectBacklightColor(int color, char* menuTitle) {
     sprintf_P(tmp, P_Colors);
     if(showInputDialog(menuTitle, P_Color, &val, String(tmp), setBacklightIndex, true)) {
       smuffConfig.backlightColor = val;
-      //__debug(PSTR("Backlight: %d"), val);
+      //__debugS(PSTR("Backlight: %d"), val);
     }
     return true;
 }
@@ -539,7 +539,7 @@ void showRevolverMenu(char* menuTitle) {
 
   do {
     setupRevolverMenu(_menu);
-    //__debug(PSTR("Revolver Menu: %s %d"), _menu, strlen(_menu));
+    //__debugS(PSTR("Revolver Menu: %s %d"), _menu, strlen(_menu));
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
 
@@ -730,7 +730,7 @@ void showSelectorMenu(char* menuTitle) {
 
   do {
     setupSelectorMenu(_menu);
-    //__debug(PSTR("Selector Menu: %s %d"), _menu, strlen(_menu));
+    //__debugS(PSTR("Selector Menu: %s %d"), _menu, strlen(_menu));
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
 
@@ -810,7 +810,7 @@ void showFeederMenu(char* menuTitle) {
 
   do {
     setupFeederMenu(_menu);
-    //__debug(PSTR("Feeder Menu: %s %d"), _menu, strlen(_menu));
+    //__debugS(PSTR("Feeder Menu: %s %d"), _menu, strlen(_menu));
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
 
@@ -1028,7 +1028,7 @@ void showSettingsMenu(char* menuTitle) {
 
   do {
     setupSettingsMenu(_menu);
-    //__debug(PSTR("Settings Menu: %d %d"), strlen(_menu), 0 /*freeMemory()*/);
+    //__debugS(PSTR("Settings Menu: %d %d"), strlen(_menu), 0 /*freeMemory()*/);
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
 
@@ -1257,7 +1257,7 @@ void showOffsetsMenu(char* menuTitle) {
 
   do {
     setupOffsetMenu(_menu);
-    //__debug(PSTR("Offsets Menu: %s %d %d"), _menu, strlen(_menu), 0 /*freeMemory()*/);
+    //__debugS(PSTR("Offsets Menu: %s %d %d"), _menu, strlen(_menu), 0 /*freeMemory()*/);
     resetAutoClose();
     stopMenu = checkStopMenu(startTime);
 
@@ -1334,7 +1334,7 @@ void changeOffset(int index) {
         posF += (stepsF*turn);
         prepSteppingAbsMillimeter(SELECTOR, posF, true);
       }
-      //__debug(PSTR("Turn: %d  Pos: %d   PosF: %s"), turn, pos, String(posF).c_str());
+      //__debugS(PSTR("Turn: %d  Pos: %d   PosF: %s"), turn, pos, String(posF).c_str());
       runAndWait(index);
       if(index == REVOLVER) {
         drawValue(steppers[index].getDescriptor(), P_InSteps, String(steppers[index].getStepPosition()));

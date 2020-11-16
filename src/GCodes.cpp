@@ -35,6 +35,8 @@
 #include "Tone32.h"
 #endif
 
+extern SdFat SD;
+
 extern ZStepper       steppers[];
 extern ZServo         servo;
 #if defined(__ESP32__)
@@ -123,7 +125,7 @@ char tmp[256];
 bool dummy(const char* msg, String buf, int serial) {
   if(!smuffConfig.prusaMMU2) {
     int code = buf.toInt();
-    __debug(PSTR("Ignored M-Code: M%d"), code);
+    __debugS(PSTR("Ignored M-Code: M%d"), code);
   }
   return true;
 }
@@ -158,7 +160,7 @@ bool M20(const char* msg, String buf, int serial) {
   if(!getParamString(buf, S_Param, tmp, sizeof(tmp))){
     sprintf(tmp,"/");
   }
-  SdFs SD;
+  SdFat SD;
   Print* out = &Serial;
 #if defined(__ESP32__)
   if (SD.begin(SDCS_PIN, SD_SCK_MHZ(4))) {
@@ -186,7 +188,7 @@ bool M42(const char* msg, String buf, int serial) {
   int pin;
   int mode;
   printResponse(msg, serial); 
-  //__debug(PSTR("M42->%s"), buf);
+  //__debugS(PSTR("M42->%s"), buf);
   
   if((pin = getParam(buf, P_Param)) != -1) {
     // pins over 1000 go to the port expander
@@ -207,7 +209,7 @@ bool M42(const char* msg, String buf, int serial) {
         portEx.pinMode(pin, OUTPUT);
       }
       if((param = getParam(buf, S_Param)) != -1 && mode == 1) {
-        //__debug(PSTR("Pin%d set to %s"), pin, param==0 ? "LOW" : "HIGH");
+        //__debugS(PSTR("Pin%d set to %s"), pin, param==0 ? "LOW" : "HIGH");
         portEx.writePin(pin, param);
       }
       if(mode != 1) {
@@ -274,7 +276,7 @@ bool M106(const char* msg, String buf, int serial) {
   if((param = getParam(buf, S_Param)) == -1) {
     param = 100;
   }
-  __debug(PSTR("Fan speed: %d%%"), param);
+  __debugS(PSTR("Fan speed: %d%%"), param);
 #ifdef __STM32F1__
   pwmWrite(FAN_PIN, map(param, 0, 100, 0, 65535));
 #elif __ESP32__
@@ -675,7 +677,7 @@ bool M700(const char* msg, String buf, int serial) {
   printResponse(msg, serial);
   if(toolSelected > 0 && toolSelected <= MAX_TOOLS) {
     getParamString(buf, S_Param, smuffConfig.materials[toolSelected], sizeof(smuffConfig.materials[0]));
-    //__debug(PSTR("Material: %s\n"),smuffConfig.materials[toolSelected]);
+    //__debugS(PSTR("Material: %s\n"),smuffConfig.materials[toolSelected]);
     return loadFilament();
   }
   else 
@@ -789,17 +791,17 @@ bool G1(const char* msg, String buf, int serial) {
     isMill = (param == 1);
   }
   if((param = getParam(buf, Y_Param)) != -1) {
-    //__debug(PSTR("G1 moving Y: %d %S"), param, isMill ? PSTR("mm") : PSTR("steps"));
+    //__debugS(PSTR("G1 moving Y: %d %S"), param, isMill ? PSTR("mm") : PSTR("steps"));
     steppers[REVOLVER].setEnabled(true);
     prepStepping(REVOLVER, param, isMill);
   }
   if((param = getParam(buf, X_Param)) != -1) {
-    //__debug(PSTR("G1 moving X: %d %S"), param, isMill ? PSTR("mm") : PSTR("steps"));
+    //__debugS(PSTR("G1 moving X: %d %S"), param, isMill ? PSTR("mm") : PSTR("steps"));
     steppers[SELECTOR].setEnabled(true);
     prepStepping(SELECTOR, param, isMill, true);
   }
   if((param = getParam(buf, Z_Param)) != -1) {
-    //__debug(PSTR("G1 moving Z: %d %S"), param, isMill ? PSTR("mm") : PSTR("steps"));
+    //__debugS(PSTR("G1 moving Z: %d %S"), param, isMill ? PSTR("mm") : PSTR("steps"));
     steppers[FEEDER].setEnabled(true);
     prepStepping(FEEDER, param, isMill);
   }

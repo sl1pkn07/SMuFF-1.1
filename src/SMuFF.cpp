@@ -29,23 +29,25 @@ U8G2_ST7565_64128N_F_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ D
 #endif
 
 #ifdef __BRD_SKR_MINI
-  #ifdef USE_TWI_DISPLAY
-  U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE); 
-  #elif USE_ANET_DISPLAY
-  /*
-    Attn.: In order to use this display you have to make some heavy modifications on the wiring
-    for the display connector!
-    Instructions can be found here: https://www.thingiverse.com/thing:4009810
-  */
-  U8G2_ST7920_128X64_F_2ND_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* reset=*/ U8X8_PIN_NONE); 
-  // if the hardware SPI doesn't work, you may try software SPI instead
-  //U8G2_ST7920_128X64_F_SW_SPI display(U8G2_R0, /* clock=*/ DSP_DC, /* data=*/ DSP_DATA, /* cs=*/ DSP_CS, /* reset=*/ U8X8_PIN_NONE);
-  #elif USE_MINI12864_PANEL_V21
-  U8G2_ST7567_JLX12864_F_2ND_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
-  #else
-  // Notice: This constructor is feasible for the MKS-MINI12864 V2.0 RepRap display
-  U8G2_ST7567_ENH_DG128064_F_2ND_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
-  //U8G2_UC1701_MINI12864_F_2ND_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  #if defined(USE_TWI_DISPLAY)
+    U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+  #elif defined(USE_ANET_DISPLAY)
+    //
+    //  Attn.: Instructions to modify the ANET display can be found here: https://www.thingiverse.com/thing:4009810
+    //
+    #pragma error "Before you use this display, you have to make some heavy modifications on the wiring for the display connector! Please check, then comment out this line."
+    U8G2_ST7920_128X64_F_2ND_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* reset=*/ U8X8_PIN_NONE);
+    // if the hardware SPI doesn't work, you may try software SPI instead
+    //U8G2_ST7920_128X64_F_SW_SPI display(U8G2_R0, /* clock=*/ DSP_DC_PIN, /* data=*/ DSP_DATA_PIN, /* cs=*/ DSP_CS_PIN, /* reset=*/ U8X8_PIN_NONE);
+  #elif defined(USE_FYSETC_1_2_DISPLAY) || defined(USE_FYSETC_2_1_DISPLAY)
+    // Notice: This constructor is feasible for the FYSETC-MINI12864 V1.2 (RGB) and FYSETC-MINI12864 V2.1 (NeoPixel) RepRap display
+    U8G2_ST7567_JLX12864_F_2ND_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  #elif defined(USE_MKS_2_0_DISPLAY)
+    // Notice: This constructor is feasible for the MKS-MINI12864 V2.0 RepRap display
+    U8G2_ST7567_ENH_DG128064_F_2ND_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  #elif defined(USE_MKS_2_1_DISPLAY)
+    // Notice: This constructor is feasible for the MKS-MINI12864 V2.1 RepRap display
+    U8G2_ST7565_NHD_C12864_F_2ND_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
   #endif
 #endif
 
@@ -59,7 +61,8 @@ U8G2_ST7565_64128N_F_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ D
 #endif
 
 #ifdef __BRD_FYSETC_AIOII
-U8G2_UC1701_MINI12864_F_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+//U8G2_UC1701_MINI12864_F_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+U8G2_ST7567_JLX12864_F_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
 #endif
 
 #if defined(__ESP32__)
@@ -166,11 +169,11 @@ void overrideStepZ() {
 }
 
 void endstopYevent() {
-  //__debug(PSTR("Endstop Revolver: %d"), steppers[REVOLVER].getStepPosition());
+  //__debugS(PSTR("Endstop Revolver: %d"), steppers[REVOLVER].getStepPosition());
 }
 
 void endstopZevent() {
-  //__debug(PSTR("Endstop Revolver: %d"), steppers[REVOLVER].getStepPosition());
+  //__debugS(PSTR("Endstop Revolver: %d"), steppers[REVOLVER].getStepPosition());
 }
 
 void endstopZ2event() {
@@ -218,7 +221,7 @@ void every1s() {
     lastTick = tmp;
   // Add your periodical code here 
 #if defined(__STM32F1__)
-    // __debug("%d ms", gcInterval);
+    // __debugS("%d ms", gcInterval);
 #endif
 }
 
@@ -306,12 +309,19 @@ void initFastLED() {
 void setup() {
 
 #ifdef __STM32F1__
+
+  // Disable JTAG pins for use in general purposes
+  #if defined(__BRD_FYSETC_AIOII)
+    disableDebugPorts();
+  #endif
+
   #ifndef USE_TWI_DISPLAY
     #ifdef STM32_REMAP_SPI
     afio_remap(AFIO_REMAP_SPI1);  // remap SPI3 to SPI1 if a "normal" display is being used
     #endif
-
+  #if !defined(__BRD_FYSETC_AIOII)
   #warning("**** Don't forget to short Z+ input to GND for programming the device! ****")
+  #endif
   if(DEBUG_OFF_PIN != -1) {
     pinMode(DEBUG_OFF_PIN, INPUT_PULLUP);
     /* ============ WARNING ================
@@ -359,7 +369,7 @@ void setup() {
 #else       
   Serial2.begin(115200);
 #endif
-  //__debug(PSTR("[ setup() ]"));
+  //__debugS(PSTR("[ setup() ]"));
 
   setupDisplay(); 
   readConfig();
@@ -391,7 +401,7 @@ void setup() {
   #endif
 #else
 #endif
-  //__debug(PSTR("DONE init SERIAL"));
+  //__debugS(PSTR("DONE init SERIAL"));
 
   setupSteppers();
   setupTimers();
@@ -460,7 +470,7 @@ void setup() {
 #elif defined(__ESP32__) 
   ledcSetup(FAN_CHANNEL, FAN_FREQ, 8);
   ledcAttachPin(FAN_PIN, FAN_CHANNEL);
-  //__debug(PSTR("DONE FAN PIN CONFIG"));
+  //__debugS(PSTR("DONE FAN PIN CONFIG"));
 #else
   pinMode(FAN_PIN, OUTPUT);
 #endif      
@@ -473,7 +483,7 @@ void setup() {
     analogWrite(FAN_PIN, map(smuffConfig.fanSpeed, 0, 100, 0, 255));    
     #endif
   }
-  //__debug(PSTR("DONE FAN init"));
+  //__debugS(PSTR("DONE FAN init"));
   #if defined( __ESP32__)
     // init the PCF8574 port expander and set pin modes (0-5 OUTPUT, 6-7 INPUT)
     portEx.begin(PORT_EXPANDER_ADDRESS, false);
@@ -484,7 +494,7 @@ void setup() {
     portEx.pinMode(6, INPUT_PULLUP);
     portEx.pinMode(7, INPUT_PULLUP);
     portEx.resetPin(0);
-    //__debug(PSTR("DONE PortExpander init"));
+    //__debugS(PSTR("DONE PortExpander init"));
   #endif
   }
 
@@ -495,7 +505,7 @@ void setup() {
     Wire.begin(smuffConfig.i2cAddress);
     Wire.onReceive(wireReceiveEvent);
   }
-  //__debug(PSTR("DONE I2C init"));
+  //__debugS(PSTR("DONE I2C init"));
  #endif
   if(smuffConfig.homeAfterFeed) {
     moveHome(REVOLVER, false, false);
@@ -503,7 +513,7 @@ void setup() {
   else {
     resetRevolver();
   }
-  //__debug(PSTR("DONE reset Revolver"));
+  //__debugS(PSTR("DONE reset Revolver"));
   
   sendStartResponse(0);
   if(smuffConfig.prusaMMU2) {
@@ -568,12 +578,12 @@ void setupSteppers() {
       steppers[i].runNoWaitFunc = runNoWait;
       steppers[i].setEnabled(true);
   }
-  //__debug(PSTR("DONE enabling steppers"));
+  //__debugS(PSTR("DONE enabling steppers"));
 
   for(int i=0; i < MAX_TOOLS; i++) {
     swapTools[i] = i;
   }
-  //__debug(PSTR("DONE initializing swaps"));
+  //__debugS(PSTR("DONE initializing swaps"));
 }
 
 void setupTimers() {
@@ -614,7 +624,7 @@ void setupTimers() {
 #else
   encoderTimer.setNextInterruptInterval(40);      // run encoder timer (AVR)
 #endif
-  //__debug(PSTR("DONE setup timers"));
+  //__debugS(PSTR("DONE setup timers"));
 }
 
 void startStepperInterval() {
@@ -636,7 +646,7 @@ void startStepperInterval() {
     stepperTimer.setOverflow(65534);
   }
   else {
-    //__debug(PSTR("minDuration: %d"), minDuration);
+    //__debugS(PSTR("minDuration: %d"), minDuration);
     stepperTimer.setNextInterruptInterval(minDuration);
   }
 }
@@ -659,7 +669,7 @@ void isrStepperHandler() {
     if(steppers[i].getMovementDone())
       remainingSteppersFlag &= ~_BV(i); 
   }
-  //__debug(PSTR("ISR(): %d"), remainingSteppersFlag);
+  //__debugS(PSTR("ISR(): %d"), remainingSteppersFlag);
   startStepperInterval();
 }
 
@@ -667,7 +677,7 @@ void runNoWait(volatile int index) {
   if(index != -1)
     remainingSteppersFlag |= _BV(index);
   startStepperInterval();
-  //__debug(PSTR("started stepper %d"), index);
+  //__debugS(PSTR("started stepper %d"), index);
 }
 
 void runAndWait(volatile int index) {
@@ -679,8 +689,8 @@ void runAndWait(volatile int index) {
       refreshStatus(true);
 #endif
   }
-  //__debug(PSTR("RunAndWait done"));
-  //if(index==FEEDER) __debug(PSTR("Fed: %smm"), String(steppers[index].getStepsTakenMM()).c_str());
+  //__debugS(PSTR("RunAndWait done"));
+  //if(index==FEEDER) __debugS(PSTR("Fed: %smm"), String(steppers[index].getStepsTakenMM()).c_str());
 }
 
 void refreshStatus(bool withLogo) {
@@ -695,7 +705,7 @@ void refreshStatus(bool withLogo) {
 
 void loop() {
 
-  //__debug(PSTR("gcInterval: %ld"), gcInterval);
+  //__debugS(PSTR("gcInterval: %ld"), gcInterval);
 #if defined(__STM32F1__) || defined(__ESP32__)
   checkSerialPending();
 #endif
@@ -711,9 +721,9 @@ void loop() {
   if(feederEndstop(2) != lastZEndstop2State) {
     lastZEndstop2State = feederEndstop(2);
     endstopZ2HitCnt++;
-    //__debug(PSTR("Endstop Z2: %d"), endstopZ2HitCnt);
+    //__debugS(PSTR("Endstop Z2: %d"), endstopZ2HitCnt);
   }
-  //__debug(PSTR("Mem: %d"), freeMemory());
+  //__debugS(PSTR("Mem: %d"), freeMemory());
 
   checkUserMessage();
   if(!displayingUserMessage) {
@@ -772,7 +782,7 @@ void loop() {
   }
   
   if((millis() - pwrSaveTime)/1000 >= (unsigned long)smuffConfig.powerSaveTimeout && !isPwrSave) {
-    //__debug(PSTR("Power save mode after %d seconds (%d)"), (millis() - pwrSaveTime)/1000, smuffConfig.powerSaveTimeout);
+    //__debugS(PSTR("Power save mode after %d seconds (%d)"), (millis() - pwrSaveTime)/1000, smuffConfig.powerSaveTimeout);
     setPwrSave(1);
   }
 #if defined(__ESP32__)
@@ -787,7 +797,7 @@ void loop() {
   while(portEx.serialAvailable(0)) { 
     char c = portEx.serialRead(0); 
     char cc = (c >= 0x20 && c < 0x7F) ? c : '.';
-    __debug(PSTR("Got: %3d - '%c' - 0x%02x"), c, cc, c);  
+    __debugS(PSTR("Got: %3d - '%c' - 0x%02x"), c, cc, c);  
   }
   */
 #endif 
@@ -807,7 +817,7 @@ bool checkUserMessage() {
   if(button == LOW && displayingUserMessage) {
     displayingUserMessage = false;
   }
-  //__debug(PSTR("%ld"), (millis()-userMessageTime)/1000);
+  //__debugS(PSTR("%ld"), (millis()-userMessageTime)/1000);
   if(millis()-userMessageTime > USER_MESSAGE_RESET*1000) {
     displayingUserMessage = false;
   }
@@ -892,7 +902,7 @@ bool isJsonData(char in) {
   }
   if(bracketCnt > 0) {
     jsonPtr++;
-    //__debug(PSTR("JSON nesting level: %d"), bracketCnt);
+    //__debugS(PSTR("JSON nesting level: %d"), bracketCnt);
   }
 
   if(jsonPtr > 0) {
@@ -903,10 +913,10 @@ bool isJsonData(char in) {
   if(bracketCnt == 0 && jsonPtr > 0) {
     /*
     if(smuffConfig.hasPanelDue) {
-      __debug(PSTR("JSON data passed through to PanelDue: %d"), jsonPtr+1);
+      __debugS(PSTR("JSON data passed through to PanelDue: %d"), jsonPtr+1);
     }
     else {
-      __debug(PSTR("PanelDue not configured. JSON data ignored"));
+      __debugS(PSTR("PanelDue not configured. JSON data ignored"));
     }
     */
     jsonPtr = 0;
@@ -930,7 +940,7 @@ void serialEvent() {
     if(isJsonData(in))
       continue;
     if (in == '\n') {
-      //__debug(PSTR("Received-0: %s"), serialBuffer0.c_str());
+      //__debugS(PSTR("Received-0: %s"), serialBuffer0.c_str());
       parseGcode(serialBuffer0, 0);
       isQuote = false;
       actionOk = false;
@@ -959,7 +969,7 @@ void serialEvent2() {
     }
     else {
       if (in == '\n') {
-        //__debug(PSTR("Received-2: %s"), serialBuffer2.c_str());
+        //__debugS(PSTR("Received-2: %s"), serialBuffer2.c_str());
         parseGcode(serialBuffer2, 2);
         isQuote = false;
         actionOk = false;
@@ -988,7 +998,7 @@ void serialEvent1() {
     if(isJsonData(in))
       continue;
     if (in == '\n') {
-      //__debug(PSTR("Received-1: %s"), serialBuffer0.c_str());
+      //__debugS(PSTR("Received-1: %s"), serialBuffer0.c_str());
       parseGcode(serialBuffer0, 1);
       isQuote = false;
       actionOk = false;
@@ -1015,7 +1025,7 @@ void serialEvent3() {
     char in = (char)Serial3.read();
     //Serial3.write(in);
     if (in == '\n') {
-      //__debug(PSTR("Received-3: %s"), serialBuffer2.c_str());
+      //__debugS(PSTR("Received-3: %s"), serialBuffer2.c_str());
       parseGcode(serialBuffer2, 3);
       isQuote = false;
       actionOk = false;

@@ -24,7 +24,7 @@
 #include "SMuFF.h"
 #include <ArduinoJson.h>
 
-SdFs SD;
+SdFat SD;
 
 #if defined(__STM32F1__)
 const size_t capacity = 2400;
@@ -54,8 +54,9 @@ void readConfig()
     }
   }
 
-  //__debug(PSTR("Trying to open config file '%s'"), CONFIG_FILE);
-  FsFile cfg;
+  //__debugS(PSTR("Trying to open config file '%s'"), CONFIG_FILE);
+  SdFile cfg;
+  SdFile* file;
   if(cfg.open(CONFIG_FILE))
   {
     if(cfg.fileSize() > capacity) {
@@ -68,7 +69,7 @@ void readConfig()
     auto error = deserializeJson(jsonDoc, cfg);
     if (error) {
       longBeep(2);
-      __debug(PSTR("deserializeJson() failed with code %s"), error.c_str());
+      __debugS(PSTR("deserializeJson() failed with code %s"), error.c_str());
       showDialog(P_TitleConfigError, P_ConfigFail1, P_ConfigFail2, P_OkButtonOnly);
     }
     else {
@@ -195,7 +196,7 @@ void readConfig()
       }
 #endif
       
-      __debug(PSTR("DONE reading config"));
+      __debugS(PSTR("DONE reading config"));
     }
     if(smuffConfig.maxSpeedHS_X == 0)
       smuffConfig.maxSpeedHS_X = smuffConfig.maxSpeed_X;
@@ -206,7 +207,7 @@ void readConfig()
     cfg.close();
   }
   else {
-    __debug(PSTR("Open config file failed: handle = %s"), !cfg ? "FALSE" : "TRUE");
+    __debugS(PSTR("Open config file failed: handle = %s"), cfg, !file ? "FALSE" : "TRUE");
     drawSDStatus(SD_ERR_NOCONFIG);
     delay(5000);
   }
@@ -316,7 +317,7 @@ bool writeConfig(Print* dumpTo)
 #endif
 
   if(dumpTo == NULL) {
-    FsFile cfg;
+    SdFile cfg;
     if(cfg.open(CONFIG_FILE, (uint8_t)(O_WRITE | O_CREAT | O_TRUNC))) {
       serializeJsonPretty(jsonDoc, cfg);
       stat = true;

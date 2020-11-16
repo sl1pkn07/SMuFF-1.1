@@ -4,11 +4,21 @@ root = true
 [{*.patch,syntax_test_*}]
 trim_trailing_whitespace = false
 
-[{*.c,*.cpp,*.h,*.CFG}, *.gcode]
+[*.c, *.cpp, *.h, *.CFG, *.json, *.gcode, *.md, *.cvs]
 charset = utf-8
-
 trim_trailing_whitespace = true
 insert_final_newline = true
 end_of_line = lf
-indent_style = space
-indent_size = 2
+indent_style = tab
+indent_size = 4
+end_of_line = lf
+
+[ *.DAT]
+charset = latin1
+
+[*.mnu, *.opt]
+charset = utf-8
+end_of_line = crlf
+indent_style = tab
+tab_width = 8
+indent_size = 8

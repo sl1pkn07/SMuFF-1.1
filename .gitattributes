@@ -6,6 +6,14 @@
 *.h text eol=lf
 *.gcode text eol=lf
 *.CFG text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.DAT text eol=lf
+
+# Files with windows line endings
+*.mnu text eol=crlf
+*.opt text eol=crlf
 
 # Binary files
 *.png binary
