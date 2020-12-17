@@ -34,8 +34,8 @@
 #include "Menus.h"
 #include "ClickEncoder.h"
 #include <SPI.h>
+#include "SdFat.h"
 #include <Wire.h>
-#include <SdFs.h>
 #include "U8g2lib.h"
 #include "MemoryFree.h"
 #include "DataStore.h"
@@ -192,16 +192,18 @@ extern U8G2_ST7565_64128N_F_4W_HW_SPI       display;
   extern "C" uint8_t __wrap_u8x8_byte_arduino_2nd_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr);
   #ifdef USE_TWI_DISPLAY
   extern U8G2_SSD1306_128X64_NONAME_F_HW_I2C  display;
-  #elif USE_ANET_DISPLAY
-  extern U8G2_ST7920_128X64_F_2ND_HW_SPI display; 
+  #elif defined(USE_ANET_DISPLAY)
+  extern U8G2_ST7920_128X64_F_2ND_HW_SPI display;
   // extern U8G2_ST7920_128X64_F_SW_SPI display;
-  #elif USE_MINI12864_PANEL_V21 || USE_MINI12864_PANEL_V20
+  #elif defined(USE_FYSETC_1_2_DISPLAY) || defined(USE_FYSETC_2_1_DISPLAY)
   extern U8G2_ST7567_JLX12864_F_2ND_4W_HW_SPI display;
-  #elif USE_CREALITY_DISPLAY
-    extern U8G2_ST7920_128X64_F_SW_SPI display;
-  #else
+  #elif defined(USE_MKS_2_0_DISPLAY)
   extern U8G2_ST7567_ENH_DG128064_F_2ND_4W_HW_SPI display;
-  //extern U8G2_UC1701_MINI12864_1_2ND_4W_HW_SPI display;
+  #elif defined(USE_MKS_2_1_DISPLAY)
+  extern U8G2_ST7565_NHD_C12864_F_2ND_4W_HW_SPI display;
+  #elif defined(USE_CREALITY_DISPLAY)
+  extern U8G2_ST7920_128X64_F_SW_SPI display;	
+  #else
   #endif
 #endif
 #ifdef __BRD_ESP32
@@ -210,10 +212,10 @@ extern U8G2_ST7565_64128N_F_4W_HW_SPI       display;
   #else
   extern U8G2_ST7567_ENH_DG128064_F_4W_HW_SPI display;
   #endif
-  extern HardwareSerial Serial3;
 #endif
 #ifdef __BRD_FYSETC_AIOII
-  extern U8G2_UC1701_MINI12864_F_4W_HW_SPI display;
+  //extern U8G2_UC1701_MINI12864_F_4W_HW_SPI display;
+  extern U8G2_ST7567_JLX12864_F_4W_HW_SPI display;
 #endif
 
 extern ZStepper       steppers[];
@@ -346,7 +348,7 @@ extern bool setServoMS(int servoNum, int microseconds);
 extern void setServoMinPwm(int servoNum, int pwm);
 extern void setServoMaxPwm(int servoNum, int pwm);
 extern void getStoredData();
-extern String readTune(const char* filename);
+extern const char* readTune(const char* filename);
 extern void readSequences();
 extern void readConfig();
 extern bool writeConfig(Print* dumpTo = NULL);
@@ -355,7 +357,7 @@ extern void resetAutoClose();
 extern bool checkUserMessage();
 extern void listDir(File root, int numTabs, int serial);
 extern void setPwrSave(int state);
-extern void __debug(const char* fmt, ...);
+extern void __debugS(const char* fmt, ...);
 extern void setAbortRequested(bool state);
 extern void resetSerialBuffer(int serial);
 extern void checkSerialPending();
@@ -447,6 +449,7 @@ extern void testFastLED();
 extern void showDuetLS();
 extern void switchFeederStepper(int stepper);
 extern void removeFirmwareBin();
+extern bool initSD(bool showStatus = true);
 
 extern unsigned int translateTicks(unsigned long ticks, int stepsPerMM);
 extern long translateSpeed(unsigned int speed, int stepsPerMM);

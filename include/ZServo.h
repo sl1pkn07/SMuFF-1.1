@@ -34,7 +34,7 @@
 #define SERVO_FREQ              50
 #endif
 
-extern void __debug(const char* fmt, ...);
+extern void __debugS(const char* fmt, ...);
 
 void isrServoTimerHandler();
 static volatile bool timerSet = false;

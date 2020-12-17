@@ -131,7 +131,7 @@ bool showInputDialog(const char* title, const char* PROGMEM message, int* val, i
       }
     }
   }
-  //__debug(PSTR("Stopped %d"),stat);
+  //__debugS(PSTR("Stopped %d"),stat);
   encoder.setAccelerationEnabled(false);
   return stat;
 }
@@ -195,7 +195,7 @@ bool showInputDialog(const char* title, const char* PROGMEM message, int* val, S
       for(int i=0; i< lineCnt; i++) {
         if(String(options[i]) == String(*val)) {
             opt = i;
-            //__debug(PSTR("Current selection: %s"), options[i]);
+            //_debugS(PSTR("Current selection: %s"), options[i]);
         }
       }
     }
@@ -247,7 +247,7 @@ bool showInputDialog(const char* title, const char* PROGMEM message, unsigned lo
   for(int i=0; i< lineCnt; i++) {
     if(String(options[i]) == String(*val)) {
         opt = i;
-        //__debug(PSTR("Current selection: %s"), options[i]);
+        //__debugS(PSTR("Current selection: %s"), options[i]);
     }
   }
   drawValue(title, message, String(options[opt]));

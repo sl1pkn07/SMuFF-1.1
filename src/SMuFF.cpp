@@ -22,13 +22,13 @@
 // Please notice: If you make any changes / additions here, you'll have to add
 // an "external" declaration in SMuFF.h as well
 #ifdef __BRD_I3_MINI
-U8G2_ST7565_64128N_F_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  U8G2_ST7565_64128N_F_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
 #endif
 
 #if defined(__BRD_SKR_MINI) || defined(__BRD_SKR_MINI_E3) || defined(__BRD_SKR_MINI_E3DIP)
-  #ifdef USE_TWI_DISPLAY
-  U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE); 
-  #elif USE_ANET_DISPLAY
+  #if defined(USE_TWI_DISPLAY)
+  U8G2_SSD1306_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+  #elif defined(USE_ANET_DISPLAY)
   //
   //  Attn.: Instructions to modify the ANET display can be found here: https://www.thingiverse.com/thing:4009810
   //
@@ -36,15 +36,17 @@ U8G2_ST7565_64128N_F_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ D
   U8G2_ST7920_128X64_F_2ND_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* reset=*/ U8X8_PIN_NONE); 
   // if the hardware SPI doesn't work, you may try software SPI instead
   //U8G2_ST7920_128X64_F_SW_SPI display(U8G2_R0, /* clock=*/ DSP_DC_PIN, /* data=*/ DSP_DATA_PIN, /* cs=*/ DSP_CS_PIN, /* reset=*/ U8X8_PIN_NONE);
-  #elif USE_MINI12864_PANEL_V21 || USE_MINI12864_PANEL_V20
-  U8G2_ST7567_JLX12864_F_2ND_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
-  #elif USE_CREALITY_DISPLAY
-    // works only with software SPI, hence it's remarkably slower than hardware SPI
-    U8G2_ST7920_128X64_F_SW_SPI display(U8G2_R0, /* clock=*/ DSP_DC_PIN, /* data=*/ DSP_DATA_PIN, /* cc=*/ DSP_CS_PIN, /* reset=*/ DSP_RESET_PIN);
-  #else
-  // Notice: This constructor is feasible for the MKS-MINI12864 V2.0 RepRap display
-  U8G2_ST7567_ENH_DG128064_F_2ND_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
-  //U8G2_UC1701_MINI12864_F_2ND_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  #elif defined(USE_FYSETC_1_2_DISPLAY) || defined(USE_FYSETC_2_1_DISPLAY)
+  // Notice: This constructor is feasible for the FYSETC-MINI12864 V1.2 (RGB) and FYSETC-MINI12864 V2.1 (NeoPixel) RepRap display
+  U8G2_ST7567_JLX12864_F_2ND_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  #elif defined(USE_MKS_2_0_DISPLAY)
+  U8G2_ST7567_ENH_DG128064_F_2ND_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  #elif defined(USE_MKS_2_1_DISPLAY)
+  // Notice: This constructor is feasible for the MKS-MINI12864 V2.1 RepRap display
+  U8G2_ST7565_NHD_C12864_F_2ND_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  #elif defined(USE_CREALITY_DISPLAY)
+  // works only with software SPI, hence it's remarkably slower than hardware SPI
+  U8G2_ST7920_128X64_F_SW_SPI display(U8G2_R0, /* clock=*/ DSP_DC_PIN, /* data=*/ DSP_DATA_PIN, /* cc=*/ DSP_CS_PIN, /* reset=*/ DSP_RESET_PIN);
   #endif
 #endif
 
@@ -58,7 +60,8 @@ U8G2_ST7565_64128N_F_4W_HW_SPI  display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ D
 #endif
 
 #ifdef __BRD_FYSETC_AIOII
-U8G2_UC1701_MINI12864_F_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  //U8G2_UC1701_MINI12864_F_4W_HW_SPI display(U8G2_R0, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
+  U8G2_ST7567_JLX12864_F_4W_HW_SPI display(U8G2_R2, /* cs=*/ DSP_CS_PIN, /* dc=*/ DSP_DC_PIN, /* reset=*/ DSP_RESET_PIN);
 #endif
 
 #if defined(__ESP32__)
@@ -180,12 +183,12 @@ void overrideStepZ() {
 
 void endstopEventY() {
   // add your code here it you want to hook into the endstop event for the Revolver
-  //__debug(PSTR("Endstop Revolver: %d"), steppers[REVOLVER].getStepPosition());
+  //__debugS(PSTR("Endstop Revolver: %d"), steppers[REVOLVER].getStepPosition());
 }
 
 void endstopEventZ() {
   // add your code here it you want to hook into the 1st endstop event for the Feeder
-  //__debug(PSTR("Endstop Revolver: %d"), steppers[REVOLVER].getStepPosition());
+  //__debugS(PSTR("Endstop Revolver: %d"), steppers[REVOLVER].getStepPosition());
 }
 
 void endstopEventZ2() {
@@ -274,7 +277,7 @@ void setup() {
   if(CAN_USE_SERIAL1) Serial1.begin(115200);       
   if(CAN_USE_SERIAL2) Serial2.begin(115200);
   if(CAN_USE_SERIAL3) Serial3.begin(115200);
-  //__debug(PSTR("[ setup() ]"));
+  //__debugS(PSTR("[ setup() ]"));
   setupBuzzer();                      // setup buzzer before reading config
   setupDeviceName();                  // used for SerialBT on ESP32 only
   setupSerialBT();                    // used for debugging on ESP32 only
@@ -303,7 +306,7 @@ void setup() {
   else {
     resetRevolver();
   }
-  //__debug(PSTR("DONE reset Revolver"));
+  //__debugS(PSTR("DONE reset Revolver"));
   
   sendStartResponse(0);       // send "start<CR><LF>" to USB serial interface
   if(CAN_USE_SERIAL1) 
@@ -338,7 +341,7 @@ void startStepperInterval() {
     stepperTimer.setOverflow(65534);
   }
   else {
-    //__debug(PSTR("minDuration: %d"), minDuration);
+    //__debugS(PSTR("minDuration: %d"), minDuration);
     stepperTimer.setNextInterruptInterval(minDuration);
   }
 }
@@ -360,10 +363,10 @@ void isrStepperHandler() {
     steppers[i].handleISR();
     if(steppers[i].getMovementDone()) {
       remainingSteppersFlag &= ~_BV(i);
-      //__debug(PSTR("ISR(): movement of %d done; Flag %d"), i, remainingSteppersFlag);
+      //__debugS(PSTR("ISR(): movement of %d done; Flag %d"), i, remainingSteppersFlag);
     } 
   }
-  //__debug(PSTR("ISR(): %d"), remainingSteppersFlag);
+  //__debugS(PSTR("ISR(): %d"), remainingSteppersFlag);
   startStepperInterval();
 }
 
@@ -371,7 +374,7 @@ void runNoWait(int index) {
   if(index != -1)
     remainingSteppersFlag |= _BV(index);
   startStepperInterval();
-  //__debug(PSTR("Started stepper %d"), index);
+  //__debugS(PSTR("Started stepper %d"), index);
 }
 
 void runAndWait(int index) {
@@ -385,8 +388,8 @@ void runAndWait(int index) {
     }
 #endif
   }
-  //__debug(PSTR("RunAndWait done"));
-  //if(index==FEEDER) __debug(PSTR("Fed: %smm"), String(steppers[index].getStepsTakenMM()).c_str());
+  //__debugS(PSTR("RunAndWait done"));
+  //if(index==FEEDER) __debugS(PSTR("Fed: %smm"), String(steppers[index].getStepsTakenMM()).c_str());
 }
 
 void refreshStatus(bool withLogo, bool feedOnly) {
@@ -408,7 +411,7 @@ void monitorTMC(int axis) {
   int temp;
   if(drivers[axis] != NULL) {
     if(drivers[axis]->otpw()) {
-      __debug(PSTR("Driver %c reports 'Overtemperature Warning'"), 'X'+axis);
+      __debugS(PSTR("Driver %c reports 'Overtemperature Warning'"), 'X'+axis);
     }
     if(drivers[axis]->ot()) {
       if(drivers[axis]->t157())
@@ -419,19 +422,19 @@ void monitorTMC(int axis) {
         temp = 143;
       if(drivers[axis]->t120())
         temp = 120;
-      __debug(PSTR("Driver %c reports 'Overtemperature' => %d°C"), 'X'+axis, temp);
+      __debugS(PSTR("Driver %c reports 'Overtemperature' => %d°C"), 'X'+axis, temp);
     }
     if(drivers[axis]->ola()) {
-      __debug(PSTR("Driver %c reports 'Open Phase A'"), 'X'+axis);
+      __debugS(PSTR("Driver %c reports 'Open Phase A'"), 'X'+axis);
     }
     if(drivers[axis]->olb()) {
-      __debug(PSTR("Driver %c reports 'Open Phase B'"), 'X'+axis);
+      __debugS(PSTR("Driver %c reports 'Open Phase B'"), 'X'+axis);
     }
     if(drivers[axis]->s2ga()) {
-      __debug(PSTR("Driver %c reports 'Short to GND on Phase A'"), 'X'+axis);
+      __debugS(PSTR("Driver %c reports 'Short to GND on Phase A'"), 'X'+axis);
     }
     if(drivers[axis]->s2gb()) {
-      __debug(PSTR("Driver %c reports 'Short to GND on Phase B'"), 'X'+axis);
+      __debugS(PSTR("Driver %c reports 'Short to GND on Phase B'"), 'X'+axis);
     }
   }
 }
@@ -471,9 +474,9 @@ void loop() {
   if(feederEndstop(2) != lastZEndstop2State) {
     lastZEndstop2State = feederEndstop(2);
     endstopZ2HitCnt++;
-    //__debug(PSTR("Endstop Z2: %d"), endstopZ2HitCnt);
+    //__debugS(PSTR("Endstop Z2: %d"), endstopZ2HitCnt);
   }
-  //__debug(PSTR("Mem: %d"), freeMemory());
+  //__debugS(PSTR("Mem: %d"), freeMemory());
 
   checkUserMessage();
   
@@ -528,7 +531,7 @@ void loop() {
   }
   
   if((millis() - pwrSaveTime)/1000 >= (unsigned long)smuffConfig.powerSaveTimeout && !isPwrSave) {
-    //__debug(PSTR("Power save mode after %d seconds (%d)"), (millis() - pwrSaveTime)/1000, smuffConfig.powerSaveTimeout);
+    //__debugS(PSTR("Power save mode after %d seconds (%d)"), (millis() - pwrSaveTime)/1000, smuffConfig.powerSaveTimeout);
     setPwrSave(1);
   }
 
@@ -568,7 +571,7 @@ void loop() {
   while(portEx.serialAvailable(0)) { 
     char c = portEx.serialRead(0); 
     char cc = (c >= 0x20 && c < 0x7F) ? c : '.';
-    __debug(PSTR("Got: %3d - '%c' - 0x%02x"), c, cc, c);  
+    __debugS(PSTR("Got: %3d - '%c' - 0x%02x"), c, cc, c);
   }
   */
 #endif 
@@ -588,7 +591,7 @@ bool checkUserMessage() {
   if(button == LOW && displayingUserMessage) {
     displayingUserMessage = false;
   }
-  //__debug(PSTR("%ld"), (millis()-userMessageTime)/1000);
+  //__debugS(PSTR("%ld"), (millis()-userMessageTime)/1000);
   if(millis()-userMessageTime > USER_MESSAGE_RESET*1000) {
     displayingUserMessage = false;
   }
@@ -672,7 +675,7 @@ bool isJsonData(char in) {
   }
   if(bracketCnt > 0) {
     jsonPtr++;
-    //__debug(PSTR("JSON nesting level: %d"), bracketCnt);
+    //__debugS(PSTR("JSON nesting level: %d"), bracketCnt);
   }
 
   if(jsonPtr > 0) {
@@ -683,10 +686,10 @@ bool isJsonData(char in) {
   if(bracketCnt == 0 && jsonPtr > 0) {
     /*
     if(smuffConfig.hasPanelDue) {
-      __debug(PSTR("JSON data passed through to PanelDue: %d"), jsonPtr+1);
+      __debugS(PSTR("JSON data passed through to PanelDue: %d"), jsonPtr+1);
     }
     else {
-      __debug(PSTR("PanelDue not configured. JSON data ignored"));
+      __debugS(PSTR("PanelDue not configured. JSON data ignored"));
     }
     */
     jsonPtr = 0;
@@ -709,7 +712,7 @@ void serialEvent() {
     if(isJsonData(in))
       continue;
     if (in == '\n') {
-      //__debug(PSTR("Received-0: %s"), serialBuffer0.c_str());
+      //__debugS(PSTR("Received-0: %s"), serialBuffer0.c_str());
       parseGcode(serialBuffer0, 0);
       isQuote = false;
       actionOk = false;
@@ -736,7 +739,7 @@ void serialEvent2() {
     }
     else {
       if (in == '\n') {
-        //__debug(PSTR("Received-2: %s"), serialBuffer2.c_str());
+        //__debugS(PSTR("Received-2: %s"), serialBuffer2.c_str());
         parseGcode(serialBuffer2, 2);
         isQuote = false;
         actionOk = false;
@@ -763,7 +766,7 @@ void serialEvent1() {
     if(isJsonData(in))
       continue;
     if (in == '\n') {
-      //__debug(PSTR("Received-1: %s"), serialBuffer1.c_str());
+      //__debugS(PSTR("Received-1: %s"), serialBuffer1.c_str());
       parseGcode(serialBuffer1, 1);
       isQuote = false;
       actionOk = false;
@@ -790,7 +793,7 @@ void serialEvent3() {
     }
     else {
       if (in == '\n') {
-        //__debug(PSTR("Received-3: %s"), serialBuffe3.c_str());
+        //__debugS(PSTR("Received-3: %s"), serialBuffe3.c_str());
         parseGcode(serialBuffer3, 3);
         isQuote = false;
         actionOk = false;

@@ -155,7 +155,7 @@ void setupSerial() {
   if(CAN_USE_SERIAL1) Serial1.begin(smuffConfig.serial1Baudrate);
   if(CAN_USE_SERIAL2) Serial2.begin(smuffConfig.serial2Baudrate);
   if(CAN_USE_SERIAL3) Serial3.begin(smuffConfig.serial3Baudrate);
-  //__debug(PSTR("DONE init SERIAL"));
+  //__debugS(PSTR("DONE init SERIAL"));
 }
 
 void setupSwSerial0() {
@@ -244,7 +244,7 @@ void setupFan() {
   #elif defined(__ESP32__) 
     ledcSetup(FAN_CHANNEL, FAN_FREQ, 8);
     ledcAttachPin(FAN_PIN, FAN_CHANNEL);
-    //__debug(PSTR("DONE FAN PIN CONFIG"));
+    //__debugS(PSTR("DONE FAN PIN CONFIG"));
   #else
     pinMode(FAN_PIN, OUTPUT);
   #endif      
@@ -259,7 +259,7 @@ void setupFan() {
       #endif
     }
   }
-  //__debug(PSTR("DONE FAN init"));
+  //__debugS(PSTR("DONE FAN init"));
 }
 
 void setupPortExpander() {
@@ -273,7 +273,7 @@ void setupPortExpander() {
   portEx.pinMode(6, INPUT_PULLUP);
   portEx.pinMode(7, INPUT_PULLUP);
   portEx.resetPin(0);
-  //__debug(PSTR("DONE PortExpander init"));
+  //__debugS(PSTR("DONE PortExpander init"));
   #endif
 }
 
@@ -285,7 +285,7 @@ void setupI2C() {
     Wire.begin(smuffConfig.i2cAddress);
     Wire.onReceive(wireReceiveEvent);
   }
-  //__debug(PSTR("DONE I2C init"));
+  //__debugS(PSTR("DONE I2C init"));
  #endif
 }
 
@@ -372,11 +372,11 @@ void setupSteppers() {
       steppers[i].setEnabled(true);
   }
   
-  __debug(PSTR("DONE init/enabling steppers"));
+  __debugS(PSTR("DONE init/enabling steppers"));
   for(int i=0; i < MAX_TOOLS; i++) {
     swapTools[i] = i;
   }
-  //__debug(PSTR("DONE initializing swaps"));
+  //__debugS(PSTR("DONE initializing swaps"));
 }
 
 
@@ -393,12 +393,12 @@ TMC2209Stepper* initDriver(int axis, int rx_pin, int tx_pin) {
   int toff    = smuffConfig.stepperToff[axis]==-1 ? (stall == 0 ? 3 : 4) : smuffConfig.stepperToff[axis];
 
   if(mode == 0) {
-    //__debug(PSTR("Driver for %c-axis skipped"), 'X'+axis);
+    //__debugS(PSTR("Driver for %c-axis skipped"), 'X'+axis);
     return NULL;
   }
 
   TMC2209Stepper* driver = new TMC2209Stepper(rx_pin, tx_pin, rsense, drvrAdr);
-  //__debug(PSTR("Driver for %c-axis initialized"), 'X'+axis);
+  //__debugS(PSTR("Driver for %c-axis initialized"), 'X'+axis);
 
   steppers[axis].setEnabled(true);
   driver->beginSerial(TMC_BAUDRATE);
@@ -470,7 +470,7 @@ void setupTMCDrivers() {
     if(STALL_Z_PIN != -1)
       pinMode(STALL_Z_PIN, INPUT);
   #endif
-  __debug(PSTR("DONE initializing TMC Steppers"));
+  __debugS(PSTR("DONE initializing TMC Steppers"));
 }
 
 void setupTimers() {
@@ -528,5 +528,5 @@ void setupTimers() {
 #else
   gpTimer.setNextInterruptInterval(3);                    // run general purpose (gp)timer on 48uS (AVR)
 #endif
-  //__debug(PSTR("DONE setup timers"));
+  //__debugS(PSTR("DONE setup timers"));
 }

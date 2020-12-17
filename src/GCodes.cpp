@@ -25,6 +25,8 @@
 #include "SMuFF.h"
 #include "GCodes.h"
 
+extern SdFat SD;
+
 char* S_Param = (char*)"S";
 char* P_Param = (char*)"P";
 char* X_Param = (char*)"X";
@@ -169,7 +171,7 @@ char tmp[256];
 bool dummy(const char* msg, String buf, int serial) {
   if(!smuffConfig.prusaMMU2) {
     int code = buf.toInt();
-    __debug(PSTR("Ignored M-Code: M%d"), code);
+    __debugS(PSTR("Ignored M-Code: M%d"), code);
   }
   return true;
 }
@@ -225,7 +227,7 @@ bool M20(const char* msg, String buf, int serial) {
   if(!getParamString(buf, S_Param, tmp, sizeof(tmp))){
     sprintf(tmp,"/");
   }
-  SdFs SD;
+  SdFat SD;
   Print* out = &Serial;
 #if defined(__ESP32__)
   if (SD.begin(SDCS_PIN, SD_SCK_MHZ(4))) {
@@ -253,7 +255,7 @@ bool M42(const char* msg, String buf, int serial) {
   int pin;
   int mode;
   printResponse(msg, serial); 
-  //__debug(PSTR("M42->%s"), buf);
+  //__debugS(PSTR("M42->%s"), buf);
   
   if((pin = getParam(buf, P_Param)) != -1) {
     // pins over 1000 go to the port expander
@@ -274,7 +276,7 @@ bool M42(const char* msg, String buf, int serial) {
         portEx.pinMode(pin, OUTPUT);
       }
       if((param = getParam(buf, S_Param)) != -1 && mode == 1) {
-        //__debug(PSTR("Pin%d set to %s"), pin, param==0 ? "LOW" : "HIGH");
+        //__debugS(PSTR("Pin%d set to %s"), pin, param==0 ? "LOW" : "HIGH");
         portEx.writePin(pin, param);
       }
       if(mode != 1) {
@@ -341,7 +343,7 @@ bool M106(const char* msg, String buf, int serial) {
   if((param = getParam(buf, S_Param)) == -1) {
     param = 100;
   }
-  //__debug(PSTR("Fan speed: %d%%"), param);
+  //__debugS(PSTR("Fan speed: %d%%"), param);
 #ifdef __STM32F1__
   fan.setFanSpeed(param);
 #elif __ESP32__
@@ -1000,7 +1002,7 @@ bool M205(const char* msg, String buf, int serial) {
   if((param = getParamString(buf, P_Param, cmd, sizeof(cmd)))  != -1) {
     float fParam = getParamF(buf, S_Param);
     if((param = getParam(buf, S_Param)) != -1) {
-      //__debug(PSTR("Value: %d"), param);
+      //__debugS(PSTR("Value: %d"), param);
 
       if(strcmp(cmd, toolCount)==0) {
         if(param >= 1 && param <= MAX_TOOLS)
@@ -1626,7 +1628,7 @@ bool M700(const char* msg, String buf, int serial) {
   printResponse(msg, serial);
   if(toolSelected > 0 && toolSelected <= MAX_TOOLS) {
     getParamString(buf, S_Param, smuffConfig.materials[toolSelected], sizeof(smuffConfig.materials[0]));
-    //__debug(PSTR("Material: %s\n"),smuffConfig.materials[toolSelected]);
+    //__debugS(PSTR("Material: %s\n"),smuffConfig.materials[toolSelected]);
     return loadFilament();
   }
   else 
@@ -1920,34 +1922,34 @@ bool G1(const char* msg, String buf, int serial) {
 
   if((param = getParam(buf, Y_Param)) != -1) {
     handleFeedSpeed(buf, REVOLVER);
-    __debug(PSTR("G1 moving Y: %d %s with speed %ld mm/s"), param, isMill ? "mm" : "steps", translateTicks(steppers[REVOLVER].getMaxSpeed(), steppers[REVOLVER].getStepsPerDegree()));
+    __debugS(PSTR("G1 moving Y: %d %s with speed %ld mm/s"), param, isMill ? "mm" : "steps", translateTicks(steppers[REVOLVER].getMaxSpeed(), steppers[REVOLVER].getStepsPerDegree()));
     steppers[REVOLVER].setEnabled(true);
     prepStepping(REVOLVER, param, isMill);
   }
   if((param = getParam(buf, X_Param)) != -1) {
     handleFeedSpeed(buf, SELECTOR);
-    __debug(PSTR("G1 moving X: %d %s with speed %ld mm/s"), param, isMill ? "mm" : "steps", translateTicks(steppers[SELECTOR].getMaxSpeed(), steppers[SELECTOR].getStepsPerMM()));
+    __debugS(PSTR("G1 moving X: %d %s with speed %ld mm/s"), param, isMill ? "mm" : "steps", translateTicks(steppers[SELECTOR].getMaxSpeed(), steppers[SELECTOR].getStepsPerMM()));
     steppers[SELECTOR].setEnabled(true);
     prepStepping(SELECTOR, param, isMill, true);
   }
   if((param = getParam(buf, Z_Param)) != -1) {
     handleFeedSpeed(buf, FEEDER);
-    __debug(PSTR("G1 moving Z: %d %s with speed %ld mm/s"), param, isMill ? "mm" : "steps", translateTicks(steppers[FEEDER].getMaxSpeed(), steppers[FEEDER].getStepsPerMM()));
+    __debugS(PSTR("G1 moving Z: %d %s with speed %ld mm/s"), param, isMill ? "mm" : "steps", translateTicks(steppers[FEEDER].getMaxSpeed(), steppers[FEEDER].getStepsPerMM()));
     steppers[FEEDER].setEnabled(true);
     prepStepping(FEEDER, param, isMill);
   }
   runAndWait(-1);
   if(hasParam(buf, X_Param) && drivers[SELECTOR] != NULL) {
     uint16_t sr = drivers[SELECTOR]->SG_RESULT();
-    __debug(PSTR("G1 StallResult X: %d  Stalled: %s"), sr, steppers[SELECTOR].getStallDetected() ? P_Yes : P_No);
+    __debugS(PSTR("G1 StallResult X: %d  Stalled: %s"), sr, steppers[SELECTOR].getStallDetected() ? P_Yes : P_No);
   }
   if(hasParam(buf, Y_Param) && drivers[REVOLVER] != NULL) {
     uint16_t sr = drivers[REVOLVER]->SG_RESULT();
-    __debug(PSTR("G1 StallResult Y: %d  Stalled: %s"), sr, steppers[REVOLVER].getStallDetected() ? P_Yes : P_No);
+    __debugS(PSTR("G1 StallResult Y: %d  Stalled: %s"), sr, steppers[REVOLVER].getStallDetected() ? P_Yes : P_No);
   }
   if(hasParam(buf, Z_Param) && drivers[FEEDER] != NULL) {
     uint16_t sr = drivers[FEEDER]->SG_RESULT();
-    __debug(PSTR("G1 StallResult Z: %d  Stalled: %s"), sr, steppers[FEEDER].getStallDetected() ? P_Yes : P_No);
+    __debugS(PSTR("G1 StallResult Z: %d  Stalled: %s"), sr, steppers[FEEDER].getStallDetected() ? P_Yes : P_No);
   }
   // set all speeds back to the configured values
   if(hasParam(buf, F_Param)) {

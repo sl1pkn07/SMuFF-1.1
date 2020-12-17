@@ -70,67 +70,77 @@
 _DEFPIN_ARM(PC12, 12, C);           // needed to compensate "Invalid pin specified" while compiling
 _DEFPIN_ARM(PB9, 9, B);
 
-#if defined(USE_MINI12864_PANEL_V20)
-#define RGB_LED_R_PIN       PB7
-#define RGB_LED_G_PIN       PC14
-#define RGB_LED_B_PIN       PC15
-#elif defined(USE_MINI12864_PANEL_V21)
-#define NEOPIXEL_PIN        PB7
-#define NUM_LEDS            3       // number of Neopixel LEDS
-#elif defined(USE_TWI_DISPLAY)
-#define NEOPIXEL_PIN        PB9     // PC12
-#define NUM_LEDS            5       // number of Neopixel LEDS
-#else
-#define NEOPIXEL_PIN        PB9
-#define NUM_LEDS            5       // number of Neopixel LEDS
-#endif
-#define BRIGHTNESS          127
-#define LED_TYPE            WS2812B
-#define COLOR_ORDER         GRB
-
 #define SDCS_PIN            -1      // use default
-
 #define USB_CONNECT_PIN     -1      // not avail 
 #define SD_DETECT_PIN       PA3
 
-#define DSP_SCL             PB6     // By default we run the SMuFF controller display on TWI (I2C)
+#if defined(USE_TWI_DISPLAY)
+#define DSP_SCL             PB6
 #define DSP_SDA             PB7
-
-#if defined(USE_ANET_DISPLAY)
-
+#define ENCODER1_PIN        PC14    // moved over to EXP1 for a more convenient cabeling
+#define ENCODER2_PIN        PC15
+#define ENCODER_BUTTON_PIN  PC11
+#define NEOPIXEL_PIN        PB9     // PC12
+#define LED_TYPE            WS2812B
+#define COLOR_ORDER         GRB
+#define NUM_LEDS            5       // number of Neopixel LEDS
+#define BRIGHTNESS          127
+#elif defined(USE_ANET_DISPLAY)
+#undef DSP_CONTRAST
+#define DSP_CONTRAST        180
 #define DSP_CS_PIN          PC14    // CS
 #define DSP_DC_PIN          PB7     // CLK
-#define ENCODER1_PIN        PC13
-#define ENCODER2_PIN        PC15
-#define ENCODER_BUTTON_PIN  PB6
-
-#elif defined(USE_MINI12864_PANEL_V21) || defined(USE_MINI12864_PANEL_V20)
-#define DSP_CS_PIN          PB6     // CS
-#define DSP_DC_PIN          PC12    // CLK
-#define DSP_RESET_PIN       PC13 
+#define DSP_DATA_PIN        PC12    // DATA
 #define ENCODER1_PIN        PD2
 #define ENCODER2_PIN        PB8
 #define ENCODER_BUTTON_PIN  PC11
-#else
-
-#define DSP_CS_PIN          PB7     // These pins are only valid if a SPI display is being used
-#define DSP_DC_PIN          PC15
-#define DSP_RESET_PIN       -1 
-
-#ifndef USE_TWI_DISPLAY
+#define NEOPIXEL_PIN        PB9
+#define LED_TYPE            WS2812B
+#define COLOR_ORDER         RGB
+#define NUM_LEDS            5       // number of Neopixel LEDS
+#define BRIGHTNESS          127
+#elif defined(USE_FYSETC_1_2_DISPLAY) || defined(USE_FYSETC_2_1_DISPLAY)
+#pragma error "You need reverse the EXP-1 and EXP-2 plastic socket in the display! (plastic gap looking to up) Please check, then comment out this line."
+#undef DSP_CONTRAST
+#define DSP_CONTRAST        180
+#define DSP_CS_PIN          PB6
+#define DSP_DC_PIN          PC12
+#define DSP_RESET_PIN       PC13
 #define ENCODER1_PIN        PD2
 #define ENCODER2_PIN        PB8
-#else
-#define ENCODER1_PIN        PC14    // moved over to EXP1 for a more convenient cabeling 
-#define ENCODER2_PIN        PC15    // (only possible if TWI display is used)
+#define ENCODER_BUTTON_PIN  PC11
+#if defined(USE_FYSETC_1_2_DISPLAY)
+#define NEOPIXEL_PIN      -1
+#define RGB_LED_R_PIN     PB7
+#define RGB_LED_G_PIN     PC15
+#define RGB_LED_B_PIN     PC14
 #endif
+#if defined(USE_FYSETC_2_1_DISPLAY)
+#define NEOPIXEL_PIN      PB7
+#define LED_TYPE          WS2812B
+#define COLOR_ORDER       RGB
+#define NUM_LEDS          3       // number of Neopixel LEDS
+#define BRIGHTNESS        127
+#endif
+#elif defined(USE_MKS_2_0_DISPLAY) || defined(USE_MKS_2_1_DISPLAY)
+#define DSP_CS_PIN          PB7
+#define DSP_DC_PIN          PC15
+#define DSP_RESET_PIN       -1
+#define ENCODER1_PIN        PD2
+#define ENCODER2_PIN        PB8
 #define ENCODER_BUTTON_PIN  PC11
+#define NEOPIXEL_PIN        PB9
+#define LED_TYPE            WS2812B
+#define COLOR_ORDER         RGB
+#define NUM_LEDS            5       // number of Neopixel LEDS
+#define BRIGHTNESS          127
 #endif
 
 #define STALL_X_PIN         -1      // 
 #define STALL_Y_PIN         -1      // 
 #define STALL_Z_PIN         -1      // 
 
+// Debug
 #ifdef USE_TWI_DISPLAY
 #define DEBUG_OFF_PIN       -1       // not needed on TWI display
 #else

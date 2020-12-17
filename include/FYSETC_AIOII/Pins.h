@@ -49,20 +49,29 @@
 
 #define BEEPER_PIN          PC9
 
-#define SERVO1_PIN          -1
+#define SERVO1_PIN          PD2      // AC-DET
 #define SERVO2_PIN          PB15     // FIL-DET
 #define FAN_PIN             PC8      // FAN1
 #define HEATER0_PIN         PC7      // BED
 #define HEATBED_PIN         PC6      // END
 
 #define NEOPIXEL_PIN        -1
+#define RGB_LED_R_PIN       PB0
+#define RGB_LED_G_PIN       PB6
+#define RGB_LED_B_PIN       PB7
+
 #define DEBUG_PIN           -1     
-#define RELAIS_PIN          -1      // Relais for stepper motor switching
+#define RELAIS_PIN          -1       // Relais for stepper motor switching
+
+#define USB_CONNECT_PIN     -1
 
 #define SDCS_PIN            PA4
-#define DSP_CS_PIN          PB5     // DOGLCD-CS
-#define DSP_DC_PIN          PA15    // DOGLCD-A0
-#define DSP_RESET_PIN       PB4     // DOGLCD-RST
+#define DSP_CS_PIN          PB5      // DOGLCD-CS
+#define DSP_DC_PIN          PA15     // DOGLCD-A0
+#define DSP_RESET_PIN       PB4      // DOGLCD-RST
+
+#undef DSP_CONTRAST
+#define DSP_CONTRAST        180
 
 #define ENCODER1_PIN        PC10
 #define ENCODER2_PIN        PC11
@@ -70,16 +79,18 @@
 
 #define DEBUG_OFF_PIN       -1
 
+#define STALL_X_PIN         -1       //
+#define STALL_Y_PIN         -1       //
+#define STALL_Z_PIN         -1       //
+
 #define CAN_USE_SERIAL1     true
-#define CAN_USE_SERIAL2     false
-#define CAN_USE_SERIAL3     true
+#define TX1_PIN             PA2      // P4-8
+#define RX1_PIN             PA3      // P4-6
 
-#define TX3_PIN             PB10     // P4-7
-#define RX3_PIN             PB11     // P4-5
+#define CAN_USE_SERIAL2     true
+#define TX2_PIN             PB10     // P4-7
+#define RX2_PIN             PB11     // P4-5
 
-#define TX2_PIN             PA2      // P4-8
-#define RX2_PIN             PA3      // P4-6
-
-#define RGB_LED_R_PIN       PB0
-#define RGB_LED_G_PIN       PB6
-#define RGB_LED_B_PIN       PB7
+#define CAN_USE_SERIAL3     false
+#define TX3_PIN             -1
+#define RX3_PIN             -1

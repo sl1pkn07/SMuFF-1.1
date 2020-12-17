@@ -54,7 +54,7 @@ void ZPortExpander::begin(int i2cAddress, bool is8575, ZPortExpanderBaudrate bau
     _maxPin = is8575 ? 15 : 7;
     _baudrate = baudrate;
 
-    //__debug(PSTR("Baud rate timing: %d"), (uint16_t)_baudrate);
+    //__debugS(PSTR("Baud rate timing: %d"), (uint16_t)_baudrate);
 #if defined(__ESP32__)
     // xTaskCreate(timerServiceTask, "ZPEServiceTask", 10000, this, 1, &taskHandle); 
 
@@ -254,7 +254,7 @@ int ZPESerial::write(const char* buffer) {
         }
     }
     return cnt;
-    //__debug(PSTR("TX-L: %d TX-H: %d / RX-L: %d RX-H: %d / Avail: TX: %d RX: %d"), _txBufferL, _txBufferH, _rxBufferL, _rxBufferH, availableTx(), available());
+    //__debugS(PSTR("TX-L: %d TX-H: %d / RX-L: %d RX-H: %d / Avail: TX: %d RX: %d"), _txBufferL, _txBufferH, _rxBufferL, _rxBufferH, availableTx(), available());
 }
 
 /**
